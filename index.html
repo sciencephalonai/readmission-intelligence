@@ -170,6 +170,11 @@
         /* ═══════════════════════════════════════
            TYPOGRAPHY
            ═══════════════════════════════════════ */
+        /* Make Reveal background transparent so canvas animations show through */
+        body { background: var(--r-background-color); }
+        .reveal { background: transparent !important; }
+        .reveal .slide-background { background: transparent !important; }
+
         .reveal .accent { color: var(--accent); }
         .reveal .accent-green { color: var(--health-green); }
         .reveal .accent-red { color: var(--health-red); }
@@ -200,7 +205,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 70vh;
+            height: 100%;
+            min-height: 100%;
             position: relative;
             z-index: 10;
             width: 100%;
@@ -567,7 +573,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 70vh;
+            height: 100%;
+            min-height: 100%;
             z-index: 20;
             position: relative;
         }
@@ -718,11 +725,11 @@
             <!-- ═══════ SLIDE 0 — TITLE ═══════ -->
             <section>
                 <div class="impact-container">
-                    <div class="impact-text" style="font-size: 1.8em;">
-                        Hospital <span class="accent">Readmission</span><br>Intelligence
+                    <div class="impact-text" style="font-size: 1.5em;">
+                        What if you could see<br><span class="accent">readmissions</span> before they happen?
                     </div>
-                    <div style="font-size: 0.65em; color: rgba(255,255,255,0.6); margin-top: 25px; z-index:20; position:relative;">
-                        Predicting &amp; Preventing 30-Day Readmissions with Machine Learning
+                    <div style="font-size: 0.55em; color: rgba(255,255,255,0.45); margin-top: 25px; z-index:20; position:relative; font-weight: 400; letter-spacing: 0.05em;">
+                        A Machine Learning Platform for 30-Day Readmission Prevention
                     </div>
                     <div style="margin-top: 40px; z-index:20; position:relative; display: flex; align-items: center; gap: 20px;">
                         <div style="text-align: center;">
@@ -742,11 +749,14 @@
                 </div>
             </section>
 
-            <!-- ═══════ SLIDE 1 — THE PROBLEM ═══════ -->
+            <!-- ═══════ SLIDE 1 — THE HUMAN COST ═══════ -->
             <section>
                 <div class="impact-container">
+                    <div style="font-size: 0.55em; color: rgba(255,255,255,0.4); margin-bottom: 15px; z-index: 20; position: relative; font-style: italic; letter-spacing: 0.03em;">
+                        Discharged on Tuesday. Back by Friday. The data saw it coming.
+                    </div>
                     <div class="impact-text">
-                        <span class="accent-red">$17B</span> wasted annually on<br>preventable readmissions
+                        <span class="accent-red">$17B</span> lost every year.<br>Most of it <span class="accent">preventable.</span>
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -755,7 +765,7 @@
                         </div>
                         <div class="stat-card">
                             <div class="stat-value amber">11.2%</div>
-                            <div class="stat-label">Overall Readmission<br>Rate (Our Data)</div>
+                            <div class="stat-label">Our Readmission Rate<br>(Internal Data)</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">7.6%</div>
@@ -763,15 +773,18 @@
                         </div>
                         <div class="stat-card">
                             <div class="stat-value red">+3.6%</div>
-                            <div class="stat-label">Gap Above<br>Benchmark</div>
+                            <div class="stat-label">Our Gap<br>Above Benchmark</div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- ═══════ SLIDE 2 — OUR APPROACH ═══════ -->
+            <!-- ═══════ SLIDE 2 — THE THESIS ═══════ -->
             <section>
                 <div class="impact-container">
+                    <div style="font-size: 0.45em; color: rgba(255,255,255,0.35); margin-bottom: 10px; z-index: 20; position: relative; letter-spacing: 0.15em; text-transform: uppercase;">
+                        Our thesis
+                    </div>
                     <div class="impact-text">
                         Predict. <span class="accent">Intervene.</span> Prevent.
                     </div>
@@ -813,7 +826,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text">
-                        Data is the <span class="accent">foundation</span>
+                        <span class="accent">101,766</span> patients told us everything
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -858,7 +871,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text">
-                        Model <span class="accent">Performance</span>
+                        The proof: <span class="accent">it works.</span>
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -888,7 +901,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.2em;">
-                        What <span class="accent">drives</span> readmission risk?
+                        The <span class="accent">#1 predictor</span> might surprise you
                     </div>
                     <div class="feature-bars">
                         <div class="feature-bar-row">
@@ -931,7 +944,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.2em;">
-                        <span class="accent">2.24×</span> Lift — Focus where it matters
+                        Target <span class="accent">10%</span> of patients. Capture <span class="accent">22%</span> of readmissions.
                     </div>
                     <table class="lift-table">
                         <thead>
@@ -955,7 +968,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.2em;">
-                        Risk <span class="accent">Stratification</span> for Action
+                        Every patient gets a <span class="accent">prescription</span>
                     </div>
                     <div class="risk-tiers">
                         <div class="risk-tier">
@@ -990,7 +1003,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.2em;">
-                        Length of Stay <span class="accent">Intelligence</span>
+                        The hidden <span class="accent-green">$6.4M</span> no one talks about
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -1020,7 +1033,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.1em;">
-                        Three Integrated <span class="accent">Modules</span>
+                        One platform. <span class="accent">Three answers.</span>
                     </div>
                     <div class="arch-container">
                         <div class="arch-row">
@@ -1098,7 +1111,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text">
-                        From prediction to <span class="accent-green">savings</span>
+                        <span class="accent-green">$2.8M</span> saved. Year one.
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -1140,7 +1153,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.1em;">
-                        Septicemia: The <span class="accent-red">costliest</span> challenge
+                        Septicemia: where every hour<br>costs <span class="accent-red">$4,237</span>
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -1169,8 +1182,8 @@
             <!-- ═══════ SLIDE 13 — WHY RSM + SCIENCEPHALON ═══════ -->
             <section>
                 <div class="impact-container">
-                    <div class="impact-text" style="font-size: 1.1em;">
-                        Why <span style="color: var(--rsm-blue);">RSM</span> + <span class="accent">SciEncephalon</span>?
+                    <div class="impact-text" style="font-size: 1.3em;">
+                        Better <span class="accent">together.</span>
                     </div>
                     <div class="stat-row">
                         <div class="stat-card" style="min-width: 180px;">
@@ -1202,8 +1215,8 @@
                 <div class="thankyou-slide-content">
                     <div class="thankyou-main">Thank <span class="accent">You.</span></div>
                     <div class="thankyou-sub">
-                        Reducing readmissions is not just a financial goal.<br>
-                        <span class="accent">It's a patient safety imperative.</span>
+                        Every readmission we prevent is a patient who heals at home —<br>
+                        <span class="accent">not back in a hospital bed.</span>
                     </div>
                     <!-- Co-branded footer -->
                     <div class="thankyou-cobrand">
@@ -1240,7 +1253,7 @@
         }
 
         Reveal.initialize({
-            width: 1280, height: 850, margin: 0.1, minScale: 0.2, maxScale: 2.0,
+            width: 1280, height: 850, margin: 0, minScale: 0.2, maxScale: 2.0,
             hash: true, center: true, transition: 'fade', backgroundTransition: 'fade',
             transitionSpeed: 'fast',
             slideNumber: true
@@ -1427,7 +1440,7 @@
             let particles = [];
             for (let i = 0; i < N; i++) {
                 let risk = Math.random();
-                particles.push({ x: Math.random() * 1280, y: Math.random() * 850, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, risk: risk, r: 2 + risk * 4 });
+                particles.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5, risk: risk, r: 2 + risk * 4 });
             }
 
             function drawFrame() {
@@ -1491,11 +1504,11 @@
             let nodes = [];
             for (let i = 0; i < 20; i++) {
                 let angle = (i / 20) * Math.PI * 2;
-                let ringR = Math.min(1280, 850) * 0.3;
+                let ringR = Math.min(W, H) * 0.3;
                 let isCenter = i === 0;
                 nodes.push({
-                    x: 640 + (isCenter ? 0 : Math.cos(angle) * ringR * (0.6 + Math.random() * 0.4)),
-                    y: 425 + (isCenter ? 0 : Math.sin(angle) * ringR * (0.6 + Math.random() * 0.4)),
+                    x: W/2 + (isCenter ? 0 : Math.cos(angle) * ringR * (0.6 + Math.random() * 0.4)),
+                    y: H/2 + (isCenter ? 0 : Math.sin(angle) * ringR * (0.6 + Math.random() * 0.4)),
                     r: isCenter ? 12 : 4 + Math.random() * 4,
                     type: isCenter ? 'hub' : (Math.random() > 0.7 ? 'alert' : 'normal'),
                     phase: Math.random() * Math.PI * 2
@@ -1561,7 +1574,7 @@
 
             let symbols = [];
             for (let i = 0; i < 60; i++) {
-                symbols.push({ x: Math.random() * 1280, y: Math.random() * 850, vy: -0.3 - Math.random() * 0.7, size: 14 + Math.random() * 20, alpha: 0.03 + Math.random() * 0.06, char: ['$', '↓', '♥', '✓', '⬢'][Math.floor(Math.random() * 5)] });
+                symbols.push({ x: Math.random() * W, y: Math.random() * H, vy: -0.3 - Math.random() * 0.7, size: 14 + Math.random() * 20, alpha: 0.03 + Math.random() * 0.06, char: ['$', '↓', '♥', '✓', '⬢'][Math.floor(Math.random() * 5)] });
             }
 
             function drawFrame() {
@@ -1711,11 +1724,11 @@
            SLIDE CHANGE CONTROLLER
            ═══════════════════════════════════════ */
         const slideTitles = {
-            0: "", 1: "The Problem", 2: "Our Approach", 3: "Data Pipeline",
-            4: "Model Performance", 5: "Feature Importance", 6: "Lift Analysis",
-            7: "Risk Stratification", 8: "Length of Stay", 9: "Architecture",
-            10: "Explainability", 11: "Financial Impact", 12: "Deep Dive",
-            13: "Why RSM + SciEncephalon?", 14: ""
+            0: "", 1: "The Stakes", 2: "Our Thesis", 3: "The Data",
+            4: "The Proof", 5: "Key Drivers", 6: "Precision Targeting",
+            7: "Action Framework", 8: "Hidden Value", 9: "The Platform",
+            10: "Explainability", 11: "The Bottom Line", 12: "Deep Dive",
+            13: "The Partnership", 14: ""
         };
 
         const slideAnimations = {
