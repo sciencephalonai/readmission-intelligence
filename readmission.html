@@ -1,0 +1,1609 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Readmission Intelligence · RSM × SciEncephalon AI | Strategic Brief</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Readmission Intelligence: predictive 30-day readmission risk scoring, remote patient monitoring, and HRRP penalty simulation — delivered by RSM US, powered by SciEncephalon AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sci-blue:#0076a3;
+    --sci-cyan:#00c2e8;
+    --sci-navy:#1a2744;
+    --sci-ink:#0b1120;
+    --sci-white:#ffffff;
+    --sci-gray:#f4f7fb;
+    --sci-hair:rgba(26,39,68,.08);
+    --sci-muted:#94a3b8;
+    --sci-muted-2:#64748b;
+    --sci-success:#10b981;
+    --sci-alert:#f59e0b;
+    --sci-danger:#ef4444;
+    --rsm-green:#43B02A;
+    --rsm-gray:#6D6E71;
+    --grad:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    --grad-rsm:linear-gradient(135deg,var(--rsm-green),var(--sci-cyan));
+    --ease:cubic-bezier(.22,1,.36,1);
+    --font-disp:'Playfair Display',Georgia,serif;
+    --font-brand:'Audiowide',system-ui,sans-serif;
+    --font-body:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{
+    font-family:var(--font-body);
+    color:var(--sci-navy);
+    background:var(--sci-navy);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"ss01","cv11";
+  }
+
+  /* ---------- Shell ---------- */
+  #deck{position:relative;width:100vw;height:100vh;overflow:hidden;background:var(--sci-navy)}
+  .slide{
+    position:absolute;inset:0;
+    display:grid;grid-template-rows:auto 1fr auto;
+    padding:clamp(14px,2.4vw,32px) clamp(22px,3.6vw,60px) clamp(72px,6vw,96px);
+    opacity:0;transform:translateY(24px) scale(.995);
+    transition:opacity .55s var(--ease),transform .55s var(--ease);
+    pointer-events:none;
+    background:#fff;
+    overflow:hidden;
+  }
+  .slide.is-active{opacity:1;transform:none;pointer-events:auto;z-index:2}
+  .slide.dark{background:var(--sci-navy);color:#fff}
+  .slide.dark *{color:inherit}
+
+  /* ---------- Chrome ---------- */
+  .chrome-top{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--sci-muted-2);font-weight:600;
+  }
+  .slide.dark .chrome-top{color:rgba(255,255,255,.55)}
+  .chrome-top .brand{display:flex;align-items:center;gap:8px}
+  .chrome-top .brand::before{
+    content:"";display:block;width:8px;height:8px;border-radius:2px;
+    background:var(--grad);
+  }
+
+  /* ---------- Brand lockup (chrome, small) ---------- */
+  .brand-lockup{
+    display:inline-flex;align-items:center;gap:10px;
+    text-transform:none;letter-spacing:0;line-height:1;
+  }
+  .brand-lockup .bl-mark{
+    font-family:var(--font-brand);font-size:15px;letter-spacing:.04em;line-height:1;
+  }
+  .brand-lockup .bl-pc{
+    background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .brand-lockup .bl-ai-badge{
+    font-family:var(--font-brand);font-size:8px;letter-spacing:.1em;
+    color:#fff;-webkit-text-fill-color:#fff;
+    background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    padding:2px 6px;border-radius:999px;line-height:1.2;margin-left:3px;
+  }
+  .brand-lockup .bl-div{width:1px;height:14px;background:var(--sci-hair)}
+  .slide.dark .brand-lockup .bl-div{background:rgba(255,255,255,.2)}
+  .brand-lockup .bl-sub{
+    font-family:'Quicksand',var(--font-body);
+    font-size:9px;letter-spacing:.18em;font-weight:500;text-transform:uppercase;
+    color:var(--sci-muted-2);display:inline-flex;align-items:center;gap:5px;line-height:1;
+  }
+  .slide.dark .brand-lockup .bl-sub{color:rgba(255,255,255,.65)}
+  .brand-lockup .bl-brand{
+    font-family:var(--font-brand);font-size:10px;letter-spacing:.02em;text-transform:none;
+  }
+  .brand-lockup .bl-sci{
+    background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .brand-lockup .bl-enc{color:var(--sci-navy);-webkit-text-fill-color:var(--sci-navy)}
+  .slide.dark .brand-lockup .bl-enc{color:#fff;-webkit-text-fill-color:#fff}
+  .brand-lockup .bl-ai-mini{
+    font-family:var(--font-brand);font-size:7px;letter-spacing:.1em;
+    color:#fff;-webkit-text-fill-color:#fff;
+    background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    padding:2px 5px;border-radius:999px;line-height:1.2;margin-left:3px;
+  }
+  .brand-lockup .bl-rsm{
+    font-family:var(--font-body);font-weight:900;font-size:11px;letter-spacing:.04em;
+    color:var(--rsm-green);-webkit-text-fill-color:var(--rsm-green);
+    margin-right:2px;
+  }
+  .slide.dark .brand-lockup .bl-rsm{color:#5ed647;-webkit-text-fill-color:#5ed647}
+  .brand-lockup .bl-amp{color:var(--sci-muted-2);margin:0 4px;font-weight:400}
+  .slide.dark .brand-lockup .bl-amp{color:rgba(255,255,255,.5)}
+
+  .chrome-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:12px;border-top:1px solid var(--sci-hair);
+    font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--sci-muted);font-weight:500;
+  }
+  .slide.dark .chrome-bottom{border-top-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55)}
+  .chrome-bottom .progress{
+    flex:1;height:2px;margin:0 24px;background:var(--sci-hair);
+    border-radius:2px;position:relative;overflow:hidden;
+  }
+  .slide.dark .chrome-bottom .progress{background:rgba(255,255,255,.15)}
+  .chrome-bottom .progress>i{
+    position:absolute;inset:0;background:var(--grad);transform-origin:left;
+    transform:scaleX(var(--p,0));transition:transform .5s var(--ease);
+  }
+
+  /* ---------- Body ---------- */
+  .body{display:flex;flex-direction:column;gap:clamp(10px,1.1vw,22px);align-content:start;min-height:0;overflow:hidden}
+  .headline + .deck-text,.headline + p{margin-top:0}
+  .kicker + .headline{margin-top:-2px}
+  .kicker{
+    font-size:clamp(10.5px,.72vw,13px);letter-spacing:.26em;text-transform:uppercase;
+    color:var(--sci-blue);font-weight:700;
+  }
+  .slide.dark .kicker{color:var(--sci-cyan)}
+  .headline{
+    font-family:var(--font-disp);font-weight:800;
+    font-size:clamp(22px,2.7vw,56px);line-height:1.08;letter-spacing:-.02em;
+    color:var(--sci-navy);max-width:34ch;
+  }
+  .slide.dark .headline{color:#fff}
+  .deck-text{
+    font-style:italic;color:var(--sci-muted-2);font-size:clamp(12px,1.05vw,19px);
+    line-height:1.5;max-width:96ch;margin-top:-4px;
+  }
+  .slide.dark .deck-text{color:rgba(255,255,255,.75)}
+
+  /* ---------- Cover ---------- */
+  .cover{
+    position:relative;overflow:hidden;
+  }
+  .cover::before,.cover::after{
+    content:"";position:absolute;border-radius:50%;
+    filter:blur(60px);opacity:.55;pointer-events:none;
+  }
+  .cover::before{width:700px;height:700px;right:-220px;top:-240px;
+    background:radial-gradient(circle,var(--sci-cyan) 0%,transparent 60%);}
+  .cover::after{width:620px;height:620px;left:-160px;bottom:-260px;
+    background:radial-gradient(circle,var(--sci-blue) 0%,transparent 60%);}
+  .cover .wordmark{
+    font-family:var(--font-brand);font-size:clamp(64px,10vw,200px);
+    line-height:1;letter-spacing:.06em;padding-left:.04em;
+    position:relative;z-index:2;
+    display:inline-flex;align-items:baseline;gap:14px;
+  }
+  .cover .wordmark .pc{
+    background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .cover .wordmark .ai{
+    font-family:var(--font-brand);font-size:.22em;letter-spacing:.1em;
+    color:#fff;-webkit-text-fill-color:#fff;
+    background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    padding:8px 16px;border-radius:999px;line-height:1.2;align-self:center;
+  }
+  .cover .tagline{
+    font-family:var(--font-disp);font-style:italic;font-weight:600;
+    font-size:clamp(20px,2vw,40px);color:#fff;margin-top:10px;position:relative;z-index:2;
+    max-width:24ch;line-height:1.25;
+  }
+  .cover .tagline span{color:var(--sci-cyan)}
+  .cover .subtag{
+    margin-top:20px;font-family:var(--font-body);color:var(--sci-cyan);
+    letter-spacing:.18em;text-transform:uppercase;font-size:clamp(12px,.9vw,16px);font-weight:600;
+    position:relative;z-index:2;
+  }
+  .cover .contact{margin-top:auto;position:relative;z-index:2;color:rgba(255,255,255,.75)}
+  .cover .contact strong{color:#fff}
+  .cover .contact a{color:var(--sci-cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s}
+  .cover .contact a:hover{border-color:var(--sci-cyan)}
+  .cover .right{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;align-items:stretch;width:100%}
+  .cover .meta-card{
+    background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:clamp(20px,1.8vw,32px) clamp(22px,2vw,36px);
+    color:rgba(255,255,255,.88);font-size:clamp(14px,1.1vw,20px);line-height:1.55;flex:1;
+    display:flex;flex-direction:column;justify-content:center;
+  }
+  .cover .meta-card .k{color:var(--sci-cyan);font-weight:600;letter-spacing:.2em;font-size:clamp(10.5px,.8vw,14px);text-transform:uppercase;display:block;margin-bottom:clamp(6px,.6vw,12px)}
+  .cover .meta-card strong{color:#fff;font-weight:700;font-size:1.08em}
+  .cover .meta-card strong{color:#fff;font-weight:600}
+
+  /* ---------- Grids / Cards ---------- */
+  .grid{display:grid;gap:clamp(14px,1.4vw,20px)}
+  .grid.c2{grid-template-columns:repeat(2,1fr)}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .grid.c4{grid-template-columns:repeat(4,1fr)}
+  .grid.c6{grid-template-columns:repeat(6,1fr)}
+
+  .card{
+    position:relative;background:#fff;border:1px solid var(--sci-hair);
+    border-radius:16px;padding:22px 24px;
+    box-shadow:0 10px 24px -18px rgba(15,23,42,.18);
+    overflow:hidden;transition:transform .3s var(--ease),box-shadow .3s var(--ease);
+  }
+  .card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);
+  }
+  .card.dark{background:var(--sci-navy);color:#fff;border-color:transparent}
+  .card.dark .v,.card.dark .num{color:#fff}
+  .card.dark .k,.card.dark .l{color:var(--sci-cyan)}
+  .card .k{
+    font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    font-weight:700;color:var(--sci-blue);margin-bottom:6px;
+  }
+  .card .v{
+    font-family:var(--font-disp);font-weight:800;font-size:clamp(26px,2.6vw,42px);
+    color:var(--sci-navy);line-height:1.05;letter-spacing:-.01em;
+  }
+  .card .l{font-size:12px;color:var(--sci-muted-2);margin-top:6px;line-height:1.45}
+  .card:hover{transform:translateY(-2px);box-shadow:0 24px 48px -28px rgba(15,23,42,.3)}
+
+  /* ---------- Nav ---------- */
+  .nav{
+    position:fixed;z-index:50;bottom:18px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:10px;padding:8px 14px;
+    background:rgba(26,39,68,.92);backdrop-filter:blur(14px);
+    border-radius:999px;border:1px solid rgba(255,255,255,.08);
+    color:rgba(255,255,255,.85);font-size:13px;
+  }
+  .nav button{
+    width:32px;height:32px;border-radius:999px;border:1px solid rgba(255,255,255,.2);
+    background:transparent;color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+    transition:background .25s var(--ease),transform .25s var(--ease);
+  }
+  .nav button:hover{background:var(--sci-cyan);color:var(--sci-navy);transform:translateY(-1px)}
+  .nav .counter{font-family:var(--font-mono);font-size:12px;min-width:56px;text-align:center;letter-spacing:.08em}
+  .nav .dot{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.25);cursor:pointer;transition:background .3s}
+  .nav .dot.is-on{background:var(--sci-cyan)}
+
+  /* ---------- Misc / so-what ---------- */
+  .sowhat{background:var(--sci-navy);color:#fff;padding:clamp(18px,1.5vw,30px) clamp(24px,2vw,38px);border-radius:12px;font-family:var(--font-body);font-style:normal;font-weight:400;font-size:clamp(14px,1.1vw,19px);line-height:1.6;letter-spacing:.005em;position:relative;overflow:hidden}
+  .sowhat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--sci-cyan)}
+  .sowhat b{color:var(--sci-cyan);font-style:normal;font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(11px,.85vw,15px);margin-right:14px}
+
+  /* ---------- Pillars / flagship ---------- */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .pillar{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;padding:22px 24px;position:relative;overflow:hidden;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);transition:transform .3s var(--ease);display:flex;flex-direction:column;gap:12px}
+  .pillar:hover{transform:translateY(-3px)}
+  .pillar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+  .pillar .num{font-family:var(--font-disp);font-weight:800;font-size:clamp(40px,3.2vw,68px);color:var(--sci-blue);line-height:1}
+  .pillar .pk{font-size:clamp(10px,.75vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .pillar h4{font-family:var(--font-disp);font-size:clamp(17px,1.5vw,28px);color:var(--sci-navy);font-weight:700;line-height:1.2}
+  .pillar p{font-size:clamp(13px,1.05vw,19px);color:var(--sci-muted-2);line-height:1.55}
+  .pillar .tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:8px}
+  .pillar .tag{font-size:clamp(10px,.72vw,13px);letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:5px 10px;background:var(--sci-gray);border-radius:999px;color:var(--sci-blue)}
+
+  /* ---------- Situation / starting position ---------- */
+  .situation{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+  .sit-left{display:flex;flex-direction:column;gap:10px}
+  .sit-item{background:#fff;border:1px solid var(--sci-hair);border-radius:12px;padding:18px 22px;position:relative;display:flex;flex-direction:column;justify-content:center}
+  .sit-item::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);border-radius:4px 0 0 4px}
+  .sit-item .k{font-size:clamp(10px,.72vw,13px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-bottom:4px}
+  .sit-item h5{font-family:var(--font-disp);font-size:clamp(15px,1.25vw,22px);color:var(--sci-navy);font-weight:700;margin-bottom:6px;line-height:1.25}
+  .sit-item p{font-size:clamp(12.5px,.98vw,17px);color:var(--sci-muted-2);line-height:1.55}
+  .starting{background:var(--sci-navy);color:#fff;border-radius:14px;padding:22px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+  .starting::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
+  .starting .h{font-size:clamp(10.5px,.7vw,13px);letter-spacing:.24em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .starting .stat{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:baseline;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.12)}
+  .starting .stat:last-child{border-bottom:0;padding-bottom:0}
+  .starting .stat .v{font-family:var(--font-disp);font-weight:800;font-size:clamp(26px,2.1vw,42px);color:#fff;line-height:1;white-space:nowrap}
+  .starting .stat .v .u{font-size:.5em;color:var(--sci-cyan);margin-left:4px;font-family:var(--font-body);font-weight:500}
+  .starting .stat .l{color:rgba(255,255,255,.82);font-size:clamp(12px,.95vw,16px);line-height:1.45}
+
+  /* ---------- Maturity framework ---------- */
+  .maturity{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative}
+  .mat{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;padding:22px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px;transition:transform .3s var(--ease),box-shadow .3s var(--ease);cursor:pointer}
+  .mat:hover{transform:translateY(-3px);box-shadow:0 20px 40px -20px rgba(15,23,42,.25)}
+  .mat .lvl{font-family:var(--font-disp);font-weight:800;font-size:clamp(44px,3.6vw,72px);color:var(--sci-blue);line-height:1;opacity:.3}
+  .mat .ttl{font-family:var(--font-disp);font-weight:700;font-size:clamp(17px,1.4vw,26px);color:var(--sci-navy);line-height:1.2}
+  .mat .desc{font-size:clamp(12.5px,.98vw,17px);color:var(--sci-muted-2);line-height:1.55;flex:1}
+  .mat .when{font-size:clamp(10px,.72vw,13px);letter-spacing:.18em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-top:auto;padding-top:12px;border-top:1px solid var(--sci-hair)}
+  .mat.here{background:var(--sci-navy);color:#fff;border-color:transparent}
+  .mat.here .lvl{color:var(--sci-cyan);opacity:1}
+  .mat.here .ttl{color:#fff}
+  .mat.here .desc{color:rgba(255,255,255,.8)}
+  .mat.here .when{color:var(--sci-cyan);border-top-color:rgba(255,255,255,.15)}
+  .mat.here::before{content:"◆ YOU ARE HERE";position:absolute;top:10px;right:10px;font-size:8.5px;letter-spacing:.18em;color:var(--sci-cyan);font-weight:800}
+  .mat-principle{background:var(--sci-navy);color:#fff;padding:clamp(18px,1.5vw,30px) clamp(24px,2vw,38px);border-radius:12px;font-family:var(--font-body);font-style:normal;font-weight:400;font-size:clamp(14px,1.1vw,19px);line-height:1.6;letter-spacing:.005em;position:relative;overflow:hidden;margin-top:4px}
+  .mat-principle::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--sci-cyan)}
+  .mat-principle b{color:var(--sci-cyan);font-style:normal;font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(11px,.85vw,15px);margin-right:14px}
+
+  /* ---------- Portfolio matrix ---------- */
+  .portfolio-row{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:stretch;min-height:0}
+  .matrix{
+    position:relative;background:var(--sci-gray);border:1px solid var(--sci-hair);
+    border-radius:14px;padding:40px 20px 20px 52px;
+    display:grid;grid-template-rows:1fr 1fr;grid-template-columns:1fr 1fr;gap:10px;
+  }
+  .matrix .quad{background:#fff;border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--sci-hair);position:relative;overflow:hidden}
+  .matrix .qtag{font-size:clamp(9px,.68vw,12px);letter-spacing:.18em;text-transform:uppercase;font-weight:800;color:var(--sci-muted-2);line-height:1.3}
+  .matrix .quad.hi{background:linear-gradient(135deg,var(--sci-navy),#253150);color:#fff;border-color:transparent}
+  .matrix .quad.hi .qtag{color:var(--sci-cyan)}
+  .matrix .bubble{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--grad);color:#fff;font-size:clamp(10px,.75vw,13px);font-weight:700;letter-spacing:.02em;line-height:1.3}
+  .matrix .quad.hi .bubble{background:var(--sci-cyan);color:var(--sci-navy)}
+  .matrix .quad .bubble.dim{background:var(--sci-muted);opacity:.75}
+  .matrix .bubbles{display:flex;flex-wrap:wrap;gap:4px}
+  .matrix .axis-y{position:absolute;left:10px;top:0;bottom:0;display:flex;justify-content:center;align-items:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:clamp(13px,1.05vw,18px);letter-spacing:.28em;text-transform:uppercase;color:var(--sci-muted-2);font-weight:800}
+  .matrix .axis-x{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:clamp(13px,1.05vw,18px);letter-spacing:.28em;text-transform:uppercase;color:var(--sci-muted-2);font-weight:800}
+  .flagpicks{display:flex;flex-direction:column;gap:10px;min-height:0}
+  .flagpick{background:#fff;border:1px solid var(--sci-hair);border-radius:12px;padding:16px 22px;display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:center;position:relative;overflow:hidden;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);transition:transform .3s var(--ease);flex:1}
+  .flagpick:hover{transform:translateY(-2px)}
+  .flagpick::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+  .flagpick .num{font-family:var(--font-disp);font-weight:800;font-size:clamp(32px,2.5vw,48px);color:var(--sci-blue);line-height:1}
+  .flagpick .n{font-family:var(--font-disp);font-size:clamp(15.5px,1.25vw,22px);color:var(--sci-navy);font-weight:700;line-height:1.2}
+  .flagpick .s{font-size:clamp(12px,.95vw,16px);color:var(--sci-muted-2);font-style:italic;margin-top:4px}
+
+  /* ---------- Flagship interactive (3-step demo) ---------- */
+  .drop-demo{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:stretch}
+  .drop-step{position:relative;border:1px solid var(--sci-hair);border-radius:14px;padding:22px 24px;background:#fff;display:flex;flex-direction:column;gap:12px;transition:border-color .3s,transform .3s var(--ease);cursor:pointer;box-shadow:0 8px 20px -16px rgba(15,23,42,.15)}
+  .drop-step:hover{border-color:var(--sci-cyan);transform:translateY(-3px)}
+  .drop-step .num{font-family:var(--font-disp);font-weight:800;font-size:clamp(44px,3.4vw,68px);line-height:1;color:var(--sci-blue)}
+  .drop-step .step-tag{font-size:clamp(10px,.75vw,13.5px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .drop-step h4{font-size:clamp(17px,1.4vw,26px);color:var(--sci-navy);font-weight:700;font-family:var(--font-disp);line-height:1.2}
+  .drop-step p{font-size:clamp(12.5px,1vw,18px);color:var(--sci-muted-2);line-height:1.55}
+  .drop-step .metric{margin-top:auto;padding:12px 16px;background:var(--sci-navy);color:#fff;border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:clamp(11.5px,.92vw,15px)}
+  .drop-step .metric strong{color:var(--sci-cyan);font-weight:700}
+  .drop-step.is-hot{animation:pulse 1.8s ease-in-out infinite;border-color:var(--sci-cyan)}
+  @keyframes pulse{0%,100%{box-shadow:0 8px 20px -16px rgba(15,23,42,.15)}50%{box-shadow:0 0 0 6px rgba(0,194,232,.15),0 8px 20px -16px rgba(15,23,42,.15)}}
+  .tool-badge{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 10px;background:var(--sci-gray);border:1px solid var(--sci-hair);border-radius:999px;align-self:flex-start}
+  .tool-badge svg{display:block;flex-shrink:0}
+  .tool-badge .tb-name{font-family:var(--font-body);font-size:clamp(12px,.92vw,15px);font-weight:600;color:var(--sci-navy);letter-spacing:.01em;white-space:nowrap}
+
+  /* ---------- Sprints (Horizon 1) ---------- */
+  .sprints{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .sprint{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);transition:transform .3s var(--ease)}
+  .sprint:hover{transform:translateY(-3px)}
+  .sprint .sp-head{background:var(--sci-blue);color:#fff;padding:16px 20px}
+  .sprint:nth-child(2) .sp-head{background:var(--sci-navy)}
+  .sprint:nth-child(3) .sp-head{background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));color:var(--sci-navy)}
+  .sprint:nth-child(3) .sp-head .when{color:var(--sci-navy);opacity:.6}
+  .sprint:nth-child(3) .sp-head .name{color:var(--sci-navy)}
+  .sprint .sp-head .when{font-size:clamp(10.5px,.78vw,13.5px);letter-spacing:.2em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .sprint .sp-head .name{font-family:var(--font-disp);font-weight:700;font-size:clamp(16px,1.35vw,24px);margin-top:3px;letter-spacing:.02em}
+  .sprint .sp-body{padding:16px 20px;flex:1}
+  .sprint ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .sprint li{font-size:clamp(12.5px,1vw,17px);color:var(--sci-navy);padding-left:16px;position:relative;line-height:1.55}
+  .sprint li::before{content:"";position:absolute;left:0;top:6px;width:5px;height:5px;background:var(--sci-cyan);border-radius:2px}
+  .sprint .sp-foot{background:var(--sci-gray);padding:9px 16px;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+  .sprint .sp-foot .k{font-size:clamp(9.5px,.68vw,12px);letter-spacing:.18em;text-transform:uppercase;color:var(--sci-blue);font-weight:700}
+  .sprint .sp-foot .v{font-family:var(--font-mono);color:var(--sci-navy);font-weight:700;font-size:clamp(11px,.82vw,13.5px)}
+
+  /* ---------- 12-Month Horizons ---------- */
+  .horizons{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--sci-hair);box-shadow:0 8px 20px -16px rgba(15,23,42,.15)}
+  .horizons th{background:var(--sci-navy);color:#fff;font-weight:700;font-size:clamp(10.5px,.78vw,13px);letter-spacing:.2em;text-transform:uppercase;padding:13px 18px;text-align:left}
+  .horizons td{padding:14px 18px;font-size:clamp(12px,.92vw,16px);color:var(--sci-navy);border-bottom:1px solid var(--sci-hair);vertical-align:top;line-height:1.5}
+  .horizons tr:last-child td{border-bottom:0}
+  .horizons td:first-child{background:var(--sci-gray);font-weight:700}
+  .horizons .horizon-tag{font-family:var(--font-disp);font-size:clamp(15px,1.2vw,22px);font-weight:800;color:var(--sci-navy);display:block}
+  .horizons .horizon-when{font-size:clamp(9.5px,.68vw,12px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;display:block;margin-top:3px}
+  .horizons .flag{color:var(--sci-blue);font-weight:600;line-height:1.4;margin-bottom:3px}
+  .horizons .flag:last-child{margin-bottom:0}
+  .horizons .flag::before{content:"◆  ";color:var(--sci-cyan);font-weight:800}
+  .horizons .foundation{color:var(--sci-muted-2)}
+
+  /* ---------- Architecture pipeline / layers ---------- */
+  .arch-layers{display:flex;flex-direction:column;gap:10px}
+  .layer{background:#fff;border:1px solid var(--sci-hair);border-radius:12px;padding:12px 18px;position:relative;overflow:hidden;display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;box-shadow:0 6px 16px -14px rgba(15,23,42,.15);transition:transform .3s var(--ease)}
+  .layer:hover{transform:translateX(4px)}
+  .layer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+  .layer .lnum{font-family:var(--font-disp);font-weight:800;font-size:clamp(28px,2.2vw,42px);color:var(--sci-blue);line-height:1;letter-spacing:-.02em}
+  .layer .lnum .small{font-size:clamp(10.5px,.75vw,13px);color:var(--sci-muted-2);display:block;letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-family:var(--font-body);margin-top:3px}
+  .layer h4{font-family:var(--font-disp);font-size:clamp(15px,1.2vw,22px);color:var(--sci-navy);font-weight:700;margin-bottom:3px}
+  .layer .sub{font-size:clamp(11.5px,.9vw,15px);color:var(--sci-muted-2);line-height:1.5}
+  .layer .sub b{color:var(--sci-navy);font-weight:600}
+  .layer .chip{font-family:var(--font-mono);font-size:clamp(9.5px,.68vw,12px);color:var(--sci-blue);background:var(--sci-gray);padding:5px 10px;border-radius:6px;letter-spacing:.05em;font-weight:600;white-space:nowrap}
+  .layer.dark{background:var(--sci-navy);color:#fff;border-color:transparent}
+  .layer.dark h4{color:#fff}
+  .layer.dark .sub{color:rgba(255,255,255,.75)}
+  .layer.dark .sub b{color:var(--sci-cyan)}
+  .layer.dark .lnum{color:var(--sci-cyan)}
+  .layer.dark .chip{background:rgba(255,255,255,.1);color:var(--sci-cyan)}
+
+  .exclusions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+  .excl{background:var(--sci-gray);border-radius:8px;padding:10px 14px;font-size:clamp(11.5px,.9vw,14.5px);color:var(--sci-navy);display:flex;align-items:center;gap:10px;line-height:1.4}
+  .excl::before{content:"✓";font-weight:800;color:var(--sci-blue);flex-shrink:0}
+  .excl.x::before{content:"✕";color:var(--sci-danger)}
+
+  /* ---------- Future Architecture (6 layers) ---------- */
+  .future-layers{display:flex;flex-direction:column;gap:clamp(6px,.55vw,12px);flex:1;min-height:0}
+  .flayer{
+    background:#fff;border:1px solid var(--sci-hair);border-radius:10px;
+    padding:clamp(10px,.95vw,18px) clamp(16px,1.3vw,24px);
+    display:grid;grid-template-columns:clamp(42px,3.2vw,58px) 1fr clamp(120px,10vw,180px);
+    gap:clamp(14px,1.3vw,24px);align-items:center;flex:1;min-height:0;
+    box-shadow:0 4px 12px -10px rgba(15,23,42,.15);position:relative;overflow:hidden;
+  }
+  .flayer::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad)}
+  .flayer .fnum{font-family:var(--font-disp);font-weight:800;font-size:clamp(22px,1.8vw,34px);color:var(--sci-blue);line-height:1}
+  .flayer h4{font-family:var(--font-disp);font-size:clamp(14px,1.1vw,20px);color:var(--sci-navy);font-weight:700;margin-bottom:2px;line-height:1.2}
+  .flayer .fsub{font-size:clamp(11px,.85vw,14.5px);color:var(--sci-muted-2);line-height:1.4}
+  .flayer .fchip{font-family:var(--font-mono);font-size:clamp(9.5px,.7vw,12px);color:var(--sci-blue);background:var(--sci-gray);padding:5px 10px;border-radius:6px;letter-spacing:.05em;font-weight:600;white-space:nowrap;text-align:center}
+  .flayer.ai{background:var(--sci-navy);color:#fff;border-color:transparent}
+  .flayer.ai h4{color:#fff}
+  .flayer.ai .fsub{color:rgba(255,255,255,.78)}
+  .flayer.ai .fnum{color:var(--sci-cyan)}
+  .flayer.ai .fchip{background:rgba(255,255,255,.1);color:var(--sci-cyan)}
+  .fgov{
+    background:var(--sci-navy);color:#fff;border-radius:10px;
+    padding:clamp(12px,1vw,20px) clamp(20px,1.6vw,30px);
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    position:relative;overflow:hidden;
+  }
+  .fgov::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+  .fgov .fgov-k{font-size:clamp(10.5px,.78vw,13.5px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .fgov .fgov-items{display:flex;gap:clamp(16px,1.6vw,32px);font-size:clamp(12.5px,1vw,16.5px);color:rgba(255,255,255,.9);flex-wrap:wrap}
+  .fgov .fgov-items span{display:inline-flex;align-items:center;gap:6px}
+  .fgov .fgov-items span::before{content:"◆";color:var(--sci-cyan);font-size:.7em}
+
+  /* ---------- Governance ---------- */
+  .gov-row{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:stretch;min-height:0}
+  .org-chart{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;padding:16px 18px;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);display:flex;flex-direction:column;gap:8px}
+  .org-chart h4{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-bottom:4px}
+  .org-role{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:9px 12px;background:var(--sci-gray);border-radius:8px;border-left:4px solid var(--sci-blue);position:relative}
+  .org-role.new{border-left-color:var(--sci-cyan);background:linear-gradient(90deg,rgba(0,194,232,.08),var(--sci-gray))}
+  .org-role.gap{border-left-color:var(--sci-alert);background:linear-gradient(90deg,rgba(245,158,11,.08),var(--sci-gray))}
+  .org-role .dot{width:9px;height:9px;border-radius:50%;background:var(--sci-blue)}
+  .org-role.new .dot{background:var(--sci-cyan)}
+  .org-role.gap .dot{background:var(--sci-alert)}
+  .org-role h5{font-family:var(--font-disp);font-size:clamp(13px,1vw,17px);color:var(--sci-navy);font-weight:700;line-height:1.2}
+  .org-role .r-sub{font-size:clamp(10.5px,.78vw,13px);color:var(--sci-muted-2);margin-top:2px}
+  .org-role .badge{font-size:clamp(8.5px,.6vw,10.5px);letter-spacing:.14em;text-transform:uppercase;font-weight:800;padding:4px 9px;border-radius:999px;background:var(--sci-cyan);color:var(--sci-navy)}
+  .org-role.gap .badge{background:var(--sci-alert);color:#fff}
+
+  .tiers-risk{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;padding:16px 18px;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);display:flex;flex-direction:column;gap:8px;min-height:0}
+  .tiers-risk h4{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-bottom:4px}
+  .tier-risk{display:grid;grid-template-columns:52px 70px 1fr;gap:12px;align-items:center;padding:11px 14px;background:var(--sci-gray);border-radius:8px;font-size:clamp(11.5px,.88vw,14.5px)}
+  .tier-risk .tk{font-family:var(--font-disp);font-weight:800;font-size:clamp(16px,1.25vw,22px);color:var(--sci-navy)}
+  .tier-risk .tl{font-size:clamp(9.5px,.68vw,12px);letter-spacing:.14em;text-transform:uppercase;font-weight:700;padding:4px 9px;border-radius:999px;text-align:center}
+  .tier-risk.t1 .tl{background:var(--sci-success);color:#fff}
+  .tier-risk.t2 .tl{background:var(--sci-alert);color:#fff}
+  .tier-risk.t3 .tl{background:var(--sci-danger);color:#fff}
+  .tier-risk .td{color:var(--sci-navy);line-height:1.4}
+  .guardrails{background:var(--sci-navy);color:#fff;border-radius:10px;padding:11px 14px;margin-top:2px}
+  .guardrails h5{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700;margin-bottom:6px}
+  .guardrails ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+  .guardrails li{font-size:clamp(11px,.85vw,14px);color:rgba(255,255,255,.85);padding-left:14px;position:relative;line-height:1.45}
+  .guardrails li::before{content:"◆";position:absolute;left:0;top:1px;color:var(--sci-cyan);font-size:8px}
+
+  /* ---------- KPIs ---------- */
+  .kpi-top{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .kpi-top .kcard{background:#fff;border:1px solid var(--sci-hair);border-radius:12px;padding:18px 22px;position:relative;overflow:hidden;box-shadow:0 6px 16px -14px rgba(15,23,42,.15);transition:transform .3s var(--ease);display:flex;flex-direction:column;justify-content:center}
+  .kpi-top .kcard:hover{transform:translateY(-3px)}
+  .kpi-top .kcard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+  .kpi-top .kv{font-family:var(--font-disp);font-weight:800;font-size:clamp(40px,3.2vw,64px);color:var(--sci-navy);line-height:1}
+  .kpi-top .kv b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .kpi-top .kl{font-size:clamp(12.5px,1vw,17px);color:var(--sci-muted-2);margin-top:8px;line-height:1.45}
+  .kpi-tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:10px;overflow:hidden;border:1px solid var(--sci-hair);box-shadow:0 6px 16px -14px rgba(15,23,42,.15)}
+  .kpi-tbl th{background:var(--sci-navy);color:#fff;font-size:clamp(9.5px,.72vw,12px);letter-spacing:.2em;text-transform:uppercase;padding:11px 15px;text-align:left;font-weight:700}
+  .kpi-tbl td{padding:11px 15px;font-size:clamp(11.5px,.9vw,15px);color:var(--sci-navy);border-bottom:1px solid var(--sci-hair);line-height:1.5;vertical-align:top}
+  .kpi-tbl tr:last-child td{border-bottom:0}
+  .kpi-tbl td:first-child{background:var(--sci-gray);font-weight:700}
+  .kpi-tbl .hl{color:var(--sci-blue);font-weight:600}
+  .program-kpis{background:var(--sci-navy);color:#fff;border-radius:10px;padding:clamp(14px,1.2vw,24px) clamp(20px,1.8vw,32px);font-size:clamp(12.5px,1vw,17px);display:flex;flex-wrap:wrap;gap:6px 20px;align-items:center;line-height:1.5}
+  .program-kpis b{color:var(--sci-cyan);font-weight:700;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(11px,.8vw,14px);margin-right:14px}
+  .program-kpis .sep{color:rgba(255,255,255,.3)}
+
+  /* ---------- Risks ---------- */
+  .risk-row{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:stretch;min-height:0}
+  .risks-list{display:flex;flex-direction:column;gap:8px;min-height:0}
+  .risk{background:#fff;border:1px solid var(--sci-hair);border-radius:12px;padding:16px 20px;display:grid;grid-template-columns:46px 1fr;gap:14px;align-items:center;position:relative;overflow:hidden;box-shadow:0 6px 16px -14px rgba(15,23,42,.15)}
+  .risk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sci-alert)}
+  .risk .rnum{font-family:var(--font-disp);font-weight:800;font-size:clamp(30px,2.4vw,44px);color:var(--sci-navy);line-height:1}
+  .risk h5{font-family:var(--font-disp);font-size:clamp(15.5px,1.25vw,22px);color:var(--sci-navy);font-weight:700;line-height:1.25;margin-bottom:5px}
+  .risk .rmit{font-size:clamp(12px,.95vw,16px);color:var(--sci-muted-2);line-height:1.5}
+  .risk .rmit b{color:var(--sci-blue);font-weight:600}
+  .advisory{background:var(--sci-navy);color:#fff;border-radius:14px;padding:clamp(24px,2.2vw,40px) clamp(24px,2.2vw,36px);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:clamp(14px,1.1vw,22px)}
+  .advisory::before{content:"";position:absolute;inset:0;background:radial-gradient(400px 220px at 90% 110%,rgba(0,194,232,.2),transparent 60%);pointer-events:none}
+  .advisory .bk{font-size:clamp(11px,.8vw,14px);letter-spacing:.24em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700;position:relative;z-index:1}
+  .advisory .adv-brand{font-family:var(--font-brand);font-size:clamp(30px,2.8vw,52px);line-height:1;letter-spacing:.02em;position:relative;z-index:1;display:inline-flex;align-items:baseline;gap:10px}
+  .advisory .adv-sci{background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .advisory .adv-enc{color:#fff;-webkit-text-fill-color:#fff}
+  .advisory .adv-ai{font-family:var(--font-brand);font-size:.42em;letter-spacing:.1em;color:#fff;-webkit-text-fill-color:#fff;background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));padding:5px 12px;border-radius:999px;line-height:1.2;align-self:center}
+  .advisory .bs{font-size:clamp(13px,1vw,17px);color:var(--sci-cyan);font-style:italic;line-height:1.5;position:relative;z-index:1;max-width:52ch}
+  .advisory .adv-list{display:flex;flex-direction:column;position:relative;z-index:1;flex:1;justify-content:space-around;gap:clamp(6px,.6vw,12px);margin-top:clamp(4px,.6vw,10px)}
+  .advisory .adv-item{display:grid;grid-template-columns:clamp(100px,8vw,150px) 1fr;gap:clamp(12px,1.2vw,22px);align-items:center;padding:clamp(10px,1vw,18px) 0;border-top:1px solid rgba(255,255,255,.12)}
+  .advisory .adv-item:first-child{border-top:0}
+  .advisory .adv-k{font-size:clamp(10.5px,.78vw,14px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .advisory .adv-v{font-size:clamp(13px,1.05vw,18px);color:rgba(255,255,255,.92);line-height:1.55}
+  .advisory .adv-credits{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1vw,20px);padding-top:clamp(12px,1vw,18px);margin-top:clamp(4px,.5vw,8px);border-top:1px solid rgba(255,255,255,.16);position:relative;z-index:1}
+  .advisory .adv-credit-k{font-size:clamp(9.5px,.7vw,12px);letter-spacing:.22em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700;margin-bottom:6px}
+  .advisory .adv-pill-list{display:flex;flex-wrap:wrap;gap:5px}
+  .advisory .adv-pill{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 11px;font-size:clamp(10.5px,.78vw,13px);color:#fff;font-weight:500;letter-spacing:.01em;white-space:nowrap}
+
+  /* ---------- Decisions / Ask ---------- */
+  .decisions{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .dec-col{background:#fff;border:1px solid var(--sci-hair);border-radius:14px;padding:24px 26px;box-shadow:0 8px 20px -16px rgba(15,23,42,.15);display:flex;flex-direction:column;gap:14px}
+  .dec-col.dark{background:var(--sci-navy);color:#fff;border-color:transparent}
+  .dec-col h4{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-bottom:4px}
+  .dec-col.dark h4{color:var(--sci-cyan)}
+  .dec-col ul{list-style:none;display:flex;flex-direction:column;gap:14px;justify-content:space-around}
+  .dec-col li{font-size:clamp(13px,1.05vw,18px);color:var(--sci-navy);padding-left:26px;position:relative;line-height:1.5}
+  .dec-col li::before{content:"";position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:4px;border:2px solid var(--sci-blue);background:#fff}
+  .dec-col.dark li{color:rgba(255,255,255,.9)}
+  .dec-col.dark li::before{border-color:var(--sci-cyan);background:transparent}
+  .dec-col li b{color:var(--sci-navy);font-weight:700}
+  .dec-col.dark li b{color:#fff}
+  .dec-head{display:flex;align-items:center;gap:10px}
+  .dec-head .dicon{width:34px;height:34px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-family:var(--font-disp);font-size:clamp(14px,1vw,17px)}
+  .dec-head .dttl{font-family:var(--font-disp);font-size:clamp(16px,1.25vw,22px);color:var(--sci-navy);font-weight:700}
+  .dec-col.dark .dec-head .dttl{color:#fff}
+
+  /* ---------- Close ---------- */
+  .close-slide{
+    background:var(--sci-navy);color:#fff;overflow:hidden;
+    display:grid;grid-template-rows:auto 1fr auto;
+  }
+  .close-slide::before,.close-slide::after{
+    content:"";position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px);opacity:.55
+  }
+  .close-slide::before{width:600px;height:600px;background:var(--sci-cyan);right:-180px;top:-220px}
+  .close-slide::after{width:500px;height:500px;background:var(--sci-blue);left:-180px;bottom:-180px}
+  .close-inner{
+    position:relative;z-index:2;display:grid;grid-template-columns:1fr 1.15fr;
+    align-items:center;align-content:center;justify-items:stretch;
+    gap:clamp(40px,6vw,100px);padding:clamp(20px,3vw,40px) 0;min-height:0;
+  }
+  .close-brand{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;text-align:center}
+  .close-mark{
+    font-family:var(--font-brand);font-size:clamp(72px,10vw,200px);line-height:1;
+    letter-spacing:.06em;padding-left:.04em;display:inline-flex;align-items:baseline;justify-content:center;gap:14px;
+  }
+  .close-mark .pc{
+    background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .close-mark .ai{
+    font-family:var(--font-brand);font-size:.22em;letter-spacing:.1em;
+    color:#fff;-webkit-text-fill-color:#fff;
+    background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    padding:8px 16px;border-radius:999px;line-height:1.2;align-self:center;
+  }
+  .close-rule{
+    width:100%;max-width:420px;height:2px;
+    background:linear-gradient(90deg,
+      rgba(0,194,232,0) 0%,
+      rgba(0,194,232,.55) 22%,
+      var(--sci-blue) 60%,
+      rgba(255,255,255,.85) 100%);
+  }
+  .close-powered{
+    font-family:'Quicksand',var(--font-body);
+    font-size:14px;font-weight:500;letter-spacing:.03em;
+    color:rgba(255,255,255,.78);line-height:1.5;text-align:center;
+    display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  }
+  .close-powered .pow-brand{font-family:var(--font-brand);font-size:15px;letter-spacing:.01em}
+  .close-powered .pow-sci{
+    background:linear-gradient(135deg,var(--sci-blue) 0%,var(--sci-cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .close-powered .pow-enc{color:#fff;-webkit-text-fill-color:#fff}
+  .close-powered .pow-ai{
+    font-family:var(--font-brand);font-size:9px;letter-spacing:.1em;
+    color:#fff;-webkit-text-fill-color:#fff;
+    background:linear-gradient(135deg,var(--sci-blue),var(--sci-cyan));
+    padding:3px 10px;border-radius:999px;line-height:1.2;margin-left:2px;
+  }
+  .close-headline{display:flex;flex-direction:column;gap:clamp(16px,1.6vw,28px);width:100%}
+  .close-slide .k{font-size:clamp(11px,.8vw,14px);letter-spacing:.28em;text-transform:uppercase;color:var(--sci-cyan);font-weight:700}
+  .close-slide .h1{font-family:var(--font-disp);font-weight:800;font-size:clamp(34px,3.8vw,84px);line-height:1.02;color:#fff;letter-spacing:-.02em;max-width:20ch}
+  .close-slide .h1 span{color:var(--sci-cyan);font-style:italic}
+  .close-slide .body-text{font-family:var(--font-disp);font-style:italic;font-size:clamp(15px,1.25vw,22px);line-height:1.55;max-width:48ch;color:rgba(255,255,255,.88)}
+  .close-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.1vw,20px);margin-top:clamp(6px,.8vw,14px)}
+  .close-highlights .hl{
+    background:rgba(255,255,255,.06);backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.14);border-radius:14px;
+    padding:clamp(14px,1.2vw,22px) clamp(16px,1.3vw,24px);
+    display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden;
+  }
+  .close-highlights .hl::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+  .close-highlights .hv{font-family:var(--font-disp);font-weight:800;font-size:clamp(26px,2.4vw,44px);color:#fff;line-height:1}
+  .close-highlights .hv b{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .close-highlights .hl-l{font-size:clamp(10.5px,.78vw,13.5px);letter-spacing:.16em;text-transform:uppercase;color:var(--sci-cyan);font-weight:600;margin-top:4px}
+  .close-slide .contact{margin-top:4px;font-size:13px;color:rgba(255,255,255,.85);display:flex;flex-wrap:wrap;gap:6px 14px}
+  .close-slide .contact a{color:var(--sci-cyan);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s}
+  .close-slide .contact a:hover{border-color:var(--sci-cyan)}
+  @media (max-width:900px){
+    .close-inner{grid-template-columns:1fr;text-align:left}
+    .close-rule{max-width:240px}
+  }
+
+  .kbd{
+    position:fixed;top:18px;right:18px;z-index:40;
+    background:rgba(26,39,68,.85);color:rgba(255,255,255,.8);
+    padding:8px 12px;border-radius:999px;font-family:var(--font-mono);font-size:11px;
+    backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);
+  }
+  .kbd kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);padding:1px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;color:#fff;margin:0 2px}
+
+  /* ---------- Fill available vertical space; no wasted real estate ---------- */
+  .pillars, .sprints, .drop-demo, .maturity,
+  .kpi-top, .arch-layers, .situation,
+  .portfolio-row, .gov-row, .risk-row, .decisions{
+    flex:1 1 0%;
+    min-height:0;
+  }
+  .horizons{flex:1 1 0%}
+  .kpi-tbl{flex:1 1 0%}
+  .risks-list{flex:1 1 0%;justify-content:space-between}
+  .advisory{justify-content:space-between}
+  .starting{justify-content:space-between}
+  .sit-left{justify-content:space-between}
+  .tiers-risk{justify-content:space-between}
+  .org-chart{justify-content:space-between}
+  .dec-col ul{flex:1}
+  .sprint .sp-body{display:flex;flex-direction:column}
+  .sprint .sp-body ul{flex:1}
+  .mat{height:100%}
+  .pillar, .drop-step, .sprint, .layer, .kcard, .dec-col, .risk, .sit-item{height:100%}
+  .matrix, .flagpicks{height:100%}
+  .body > .sowhat{margin-top:auto}
+
+  @media (max-width:1100px){
+    .grid.c3,.grid.c4,.pillars,.sprints,.maturity,.kpi-top{grid-template-columns:1fr 1fr}
+    .grid.c6{grid-template-columns:repeat(3,1fr)}
+    .portfolio-row,.gov-row,.risk-row,.decisions,.situation{grid-template-columns:1fr}
+    .drop-demo{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="kbd">Use <kbd>←</kbd> <kbd>→</kbd> to navigate</div>
+
+<div id="deck">
+
+<!-- SLIDE 1: COVER ============================================== -->
+<section class="slide dark cover is-active" data-section="Cover">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>Cover</span>
+    <span>CONFIDENTIAL · RSM × SCIENCEPHALON AI · 2026</span>
+  </div>
+  <div class="body" style="gap:0;flex:1;min-height:0">
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:clamp(32px,3vw,60px);align-items:stretch;flex:1;min-height:0">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;gap:clamp(14px,1.2vw,22px);padding:clamp(10px,1vw,20px) 0">
+        <div class="kicker">Predictive Care Intelligence</div>
+        <div style="display:flex;flex-direction:column;gap:clamp(10px,1vw,18px)">
+          <div class="wordmark"><span class="pc">READMISSION</span><span class="ai">AI</span></div>
+          <div class="tagline">Predict. Intervene. <span>Prevent.</span></div>
+          <div class="subtag">XGBoost predictive engine  ·  Remote patient monitoring  ·  HRRP financial simulator</div>
+        </div>
+        <div class="contact" style="font-size:clamp(13px,1vw,17px);line-height:1.7">
+          Delivered by <strong>RSM US</strong>, powered by <strong>SciEncephalon AI</strong><br>
+          90-Day Pilot  +  12-Month Deployment
+        </div>
+      </div>
+      <div class="right" style="justify-content:space-between;gap:clamp(14px,1.2vw,22px);padding:clamp(10px,1vw,20px) 0">
+        <div class="meta-card">
+          <span class="k">Starting Position</span>
+          <strong>11.2% readmission rate.</strong> $17B lost annually across US Medicare. 3.6 pp gap above NY benchmark.
+        </div>
+        <div class="meta-card">
+          <span class="k">The Three Bets</span>
+          <strong>Predict · Intervene · Simulate.</strong> XGBoost risk engine, RPM on top-decile, HRRP penalty modeling.
+        </div>
+        <div class="meta-card">
+          <span class="k">The Target</span>
+          <strong>25% reduction in 30-day readmits.</strong> $256M saved per percentage point at NY state scale.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom">
+    <span>Confidential · April 22, 2026</span>
+    <span class="progress"><i></i></span>
+    <span class="counter-text">01 / 15</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: GOVERNING IDEA ==================================== -->
+<section class="slide" data-section="01 · Governing Idea">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>01 · Governing Idea</span>
+    <span>02 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Governing Idea</div>
+    <h2 class="headline">The question is not whether to predict readmissions. It is how to act on the prediction.</h2>
+    <p class="deck-text">Move hospital readmission programs from reactive (discharge + pray) to preventive (predict + intervene) in 12 months by concentrating on three capabilities on one governed clinical-data foundation, with a hands-on operating model.</p>
+
+    <div class="pillars" >
+      <div class="pillar">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">01</div><div class="pk">Pillar 1</div></div>
+        <h4>Concentrate on three flagship capabilities.</h4>
+        <p>Avoid the pilot graveyard. Predict accurately, intervene on the top decile, and simulate financial impact; each play funds the next and stacks proof of clinical and economic value.</p>
+        <div class="tag-row"><span class="tag">XGBoost risk scoring</span><span class="tag">Remote monitoring</span><span class="tag">HRRP simulator</span></div>
+      </div>
+      <div class="pillar">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">02</div><div class="pk">Pillar 2</div></div>
+        <h4>Build the foundation once.</h4>
+        <p>One governed clinical-data platform, one SHAP explainability layer, one HIPAA-compliant AI stack. Reuse across every condition instead of rebuilding per DRG.</p>
+        <div class="tag-row"><span class="tag">FHIR + OMOP</span><span class="tag">SHAP by default</span><span class="tag">HIPAA + SOC 2</span></div>
+      </div>
+      <div class="pillar">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">03</div><div class="pk">Pillar 3</div></div>
+        <h4>Deliver with a hands-on model.</h4>
+        <p>No ivory tower. RSM on-site workshops, clinical gate reviews, and knowledge transfer to a standing health-system AI team; capability stays with the hospital after the engagement.</p>
+        <div class="tag-row"><span class="tag">RSM on-site</span><span class="tag">Clinical gates</span><span class="tag">Transfer to owner</span></div>
+      </div>
+    </div>
+
+    <div class="sowhat" ><b>So what:</b>three sequenced bets on one clinical-data foundation, delivered by RSM with SciEncephalon AI, advance a hospital system from reactive to preventive without compromising PHI, clinician trust, or HRRP standing.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">02 / 15</span></div>
+</section>
+
+<!-- SLIDE 3: SITUATION ========================================== -->
+<section class="slide" data-section="02 · Situation">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>02 · Situation</span>
+    <span>03 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Situation</div>
+    <h2 class="headline">US hospitals lose $17B a year on preventable readmissions. Most systems still operate reactively.</h2>
+    <p class="deck-text">The readmission rate is not a measurement problem; it is a workflow problem. Discharge happens, PPR reports arrive 30–60 days later, penalties land two quarters after that. By the time a hospital knows, the patient is already back.</p>
+
+    <div class="situation" >
+      <div class="sit-left">
+        <div class="sit-item">
+          <div class="k">Reactive posture</div>
+          <h5>Retrospective PPR reporting; no predictive signal at the point of discharge.</h5>
+          <p>Quality teams see readmissions after they happen. Care managers triage by intuition, not by risk score. Every high-risk discharge without an intervention is a missed save.</p>
+        </div>
+        <div class="sit-item">
+          <div class="k">Point-solution stack</div>
+          <h5>LACE, ED-triage, and billing tools in separate silos; none are predictive at scale.</h5>
+          <p>Hospitals buy a risk score, a dashboard, and a dashboard vendor. No shared data platform, no shared explainability layer, no shared financial model linking clinical work to HRRP exposure.</p>
+        </div>
+        <div class="sit-item">
+          <div class="k">HRRP penalty drag</div>
+          <h5>3% max Medicare payment penalty; compounds across fiscal years.</h5>
+          <p>CMS HRRP penalizes above-expected readmission ratios automatically. For a mid-size system, that is $2–5M in annual exposure before any intervention cost is counted.</p>
+        </div>
+      </div>
+      <div class="starting">
+        <div class="h">Starting Position</div>
+        <div class="stat">
+          <div class="v">11.2%</div>
+          <div class="l">All-cause 30-day readmission rate (UCI diabetes cohort); NY all-payer ≈ 12–14%</div>
+        </div>
+        <div class="stat">
+          <div class="v">+3.6 pp</div>
+          <div class="l">Gap vs. NY State PPR benchmark (7.6%); every point = $256M at state scale</div>
+        </div>
+        <div class="stat">
+          <div class="v">3%</div>
+          <div class="l">Max HRRP Medicare payment penalty; applies annually, compounds each fiscal year</div>
+        </div>
+        <div class="stat">
+          <div class="v">2.2M</div>
+          <div class="l">Annual NY SPARCS inpatient discharges; the addressable cohort for intervention</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sowhat" ><b>So what:</b>the measurement apparatus is mature. The prediction-to-intervention loop is not. Closing that loop is the 12-month program.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">03 / 15</span></div>
+</section>
+
+<!-- SLIDE 4: MATURITY FRAMEWORK ================================ -->
+<section class="slide" data-section="03 · Maturity Framework">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>03 · Maturity Framework</span>
+    <span>04 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Four-Level Readmission Maturity</div>
+    <h2 class="headline">Advance one block at a time. Never skip.</h2>
+    <p class="deck-text">Each level is defined in terms that are auditable, not aspirational. Most US hospital systems today sit at Level 1 or L2. The building-block principle is the governing constraint of the whole plan.</p>
+
+    <div class="maturity" >
+      <div class="mat here">
+        <div class="lvl">L1</div>
+        <div class="ttl">Reactive</div>
+        <div class="desc">Retrospective PPR reporting; discharge checklists; LACE-style heuristics. Care managers triage on intuition. No predictive signal at the point of discharge.</div>
+        <div class="when">Most hospitals today</div>
+      </div>
+      <div class="mat">
+        <div class="lvl">L2</div>
+        <div class="ttl">Risk-Stratified</div>
+        <div class="desc">Validated risk scores at discharge; manual care transitions; targeted follow-up calls. Explainability still thin; interventions generic across conditions.</div>
+        <div class="when">Month 4–6</div>
+      </div>
+      <div class="mat">
+        <div class="lvl">L3</div>
+        <div class="ttl">Predictive + Monitored</div>
+        <div class="desc">XGBoost scoring with SHAP per patient; RPM on top-decile discharges; condition-specific interventions (CHF, COPD, pneumonia). HRRP financial simulator live.</div>
+        <div class="when">Month 9–12</div>
+      </div>
+      <div class="mat">
+        <div class="lvl">L4</div>
+        <div class="ttl">Preventive at Scale</div>
+        <div class="desc">Automated interventions across all payers and conditions; continuous model retraining; agentic care-manager workflows; real-time HRRP exposure dashboards.</div>
+        <div class="when">Beyond 12 mo.</div>
+      </div>
+    </div>
+
+    <div class="mat-principle"><b>Governing principle:</b>Finish Level 2 before Level 3 opens. Deploying RPM without a calibrated risk model wastes capacity on low-risk patients. Deploying a risk model without RPM leaves the save unclaimed. The sequence is the strategy.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">04 / 15</span></div>
+</section>
+
+<!-- SLIDE 5: PORTFOLIO MATRIX + PICKS =========================== -->
+<section class="slide" data-section="04 · Portfolio">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>04 · Portfolio</span>
+    <span>05 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Capability Portfolio</div>
+    <h2 class="headline">Scored on clinical impact, build complexity, and time-to-value.</h2>
+    <p class="deck-text">Ten candidate capabilities mapped against clinical ROI and build complexity. Three flagship picks anchor the 12-month program; one for prediction, one for intervention, one for financial proof — each with a distinct buyer inside the hospital.</p>
+
+    <div class="portfolio-row" >
+      <div class="matrix">
+        <span class="axis-y">Clinical ROI  →</span>
+        <span class="axis-x">Complexity  →</span>
+        <div class="quad hi">
+          <span class="qtag">Quick Wins · High ROI / Low Complexity</span>
+          <div class="bubbles">
+            <span class="bubble">Readmission risk score</span>
+            <span class="bubble">SHAP per-patient card</span>
+            <span class="bubble">Care-manager priority list</span>
+            <span class="bubble">PPR baseline dashboard</span>
+          </div>
+        </div>
+        <div class="quad hi">
+          <span class="qtag">Strategic Bets · High ROI / High Complexity</span>
+          <div class="bubbles">
+            <span class="bubble">RPM post-discharge</span>
+            <span class="bubble">HRRP financial simulator</span>
+            <span class="bubble">Condition-specific playbooks</span>
+          </div>
+        </div>
+        <div class="quad">
+          <span class="qtag">Low Priority · Low ROI / Low Complexity</span>
+          <div class="bubbles"><span class="bubble dim">Generic nurse-call follow-up</span></div>
+        </div>
+        <div class="quad">
+          <span class="qtag">Foundational · Low ROI / High Complexity</span>
+          <div class="bubbles">
+            <span class="bubble dim">FHIR + OMOP harmonization</span>
+            <span class="bubble dim">Continuous model retraining</span>
+            <span class="bubble dim">Agentic care workflows</span>
+          </div>
+        </div>
+      </div>
+      <div class="flagpicks">
+        <div style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--sci-blue);font-weight:800;margin-bottom:4px">Flagship Picks</div>
+        <div class="flagpick">
+          <div class="num">01</div>
+          <div>
+            <div class="n">Readmission Forecaster</div>
+            <div class="s">Prediction play; XGBoost + SHAP at point of discharge</div>
+          </div>
+        </div>
+        <div class="flagpick">
+          <div class="num">02</div>
+          <div>
+            <div class="n">RPM for Top Decile</div>
+            <div class="s">Intervention play; CHF / COPD / pneumonia home monitoring</div>
+          </div>
+        </div>
+        <div class="flagpick">
+          <div class="num">03</div>
+          <div>
+            <div class="n">HRRP Financial Simulator</div>
+            <div class="s">Proof play; penalty exposure modeled against intervention cost</div>
+          </div>
+        </div>
+        <div class="sowhat" style="font-size:13px"><b>Logic:</b>one play per clinical-financial vector — predict, intervene, simulate — each with a distinct owner (care manager, RPM nurse, administrator).</div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">05 / 15</span></div>
+</section>
+
+<!-- SLIDE 6: FLAGSHIP BETS (interactive) ======================== -->
+<section class="slide" data-section="05 · Flagship Bets">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>05 · Flagship Bets</span>
+    <span>06 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">The Three Bets, Up Close</div>
+    <h2 class="headline">Predict. Intervene. Simulate. Three plays, three owners, one patient.</h2>
+    <p class="deck-text">Hover or tap each bet. Each one has a distinct clinical owner (care manager, RPM nurse, administrator), a distinct payoff shape, and a distinct failure mode the plan is designed to avoid.</p>
+
+    <div class="drop-demo" id="drop-demo" >
+      <div class="drop-step is-hot" data-step="1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">01</div><div class="step-tag">Predict · Care Managers</div></div>
+        <div class="tool-badge">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#0076a3"/><path d="M7 12 L10 15 L17 8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tb-name">XGBoost + SHAP</span>
+        </div>
+        <h4>Readmission Forecaster.</h4>
+        <p>XGBoost ensemble trained on <b>101K UCI diabetes encounters</b> + NY SPARCS; scores every discharge on 30-day readmission risk with <b>per-patient SHAP reasoning</b>. Care managers see <i>why</i> a patient is high-risk, not just that they are.</p>
+        <div class="metric"><strong>25%</strong><span>hit rate in top-10% flagged (vs 11.2% base)</span></div>
+      </div>
+      <div class="drop-step" data-step="2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">02</div><div class="step-tag">Intervene · RPM Nurses</div></div>
+        <div class="tool-badge">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#43B02A"/><path d="M6 13 L9 13 L10.5 9 L13.5 17 L15 13 L18 13" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tb-name">Remote Patient Monitoring</span>
+        </div>
+        <h4>RPM for the Top Decile.</h4>
+        <p>The top 10% of flagged discharges get <b>home vitals monitoring</b> — weight for CHF fluid retention, SpO2 for COPD, glucose for diabetes. IoT alerts feed directly into the RPM nurse queue with intervention playbooks per condition.</p>
+        <div class="metric"><strong>22.4%</strong><span>of all readmits captured in top 10% flagged</span></div>
+      </div>
+      <div class="drop-step" data-step="3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num">03</div><div class="step-tag">Simulate · Administrators</div></div>
+        <div class="tool-badge">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#00c2e8"/><text x="12" y="17" font-size="14" font-weight="700" text-anchor="middle" fill="#1a2744" font-family="Inter, sans-serif">$</text></svg>
+          <span class="tb-name">HRRP Financial Simulator</span>
+        </div>
+        <h4>HRRP Penalty &amp; ROI Simulator.</h4>
+        <p>Live what-if model: move readmission rate from <b>11.2% → target</b>; size the census; set avg LOS; watch annual savings update. Cross-checked vs. AHRQ HCUP and CMS readmission cost data. <b>Every point cut ≈ $256M</b> at NY state scale.</p>
+        <div class="metric"><strong>5.2×</strong><span>ROI on intervention cost (pro-forma)</span></div>
+      </div>
+    </div>
+
+    <div class="sowhat" ><b>Why these three:</b>the forecaster proves accuracy to care managers; RPM proves clinical save to medical directors; the simulator proves financial ROI to the CFO — three audiences, three proofs, one Phase 1.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">06 / 15</span></div>
+</section>
+
+<!-- SLIDE 7: HORIZON 1 · 3 SPRINTS ============================== -->
+<section class="slide" data-section="06 · Horizon 1 · Days 0–90">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>06 · Horizon 1 · Days 0–90</span>
+    <span>07 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Horizon 1 · Days 0–90</div>
+    <h2 class="headline">Land fast: three sprints, three clinical gates.</h2>
+    <p class="deck-text">No pilot advances without a written proof of clinical and financial value. Each sprint ends in a gated review with exit criteria signed off by the Clinical AI Committee; momentum through discipline, not through optimism.</p>
+
+    <div class="sprints" >
+      <div class="sprint">
+        <div class="sp-head">
+          <div class="when">Sprint 1 · Days 0–30</div>
+          <div class="name">Baseline &amp; Data</div>
+        </div>
+        <div class="sp-body">
+          <ul>
+            <li>EHR + SPARCS extract · 30-day PPR baseline established</li>
+            <li>HIPAA BAA + SOC 2 review for AI stack · risk-tier classification signed off</li>
+            <li>Pilot hospital selected · clinical charter + success criteria</li>
+            <li>XGBoost ensemble trained on UCI + internal data · held-out test split</li>
+            <li>Care-manager workflow shadowed · current PPR triage mapped</li>
+          </ul>
+        </div>
+        <div class="sp-foot"><span class="k">Gate exit</span><span class="v">Baseline known · model > 0.65 AUC</span></div>
+      </div>
+      <div class="sprint">
+        <div class="sp-head">
+          <div class="when">Sprint 2 · Days 31–60</div>
+          <div class="name">Pilot &amp; Explain</div>
+        </div>
+        <div class="sp-body">
+          <ul>
+            <li>Top-decile priority list delivered daily to care managers</li>
+            <li>SHAP per-patient reasoning card in EHR sidebar</li>
+            <li>RPM soft launch for CHF cohort · IoT integration validated</li>
+            <li>HRRP simulator v1 — every percentage point = $ savings live</li>
+            <li>Clinician red-team · false-positive review on 200 discharges</li>
+          </ul>
+        </div>
+        <div class="sp-foot"><span class="k">Gate exit</span><span class="v">Top-decile list in use · SHAP validated</span></div>
+      </div>
+      <div class="sprint">
+        <div class="sp-head">
+          <div class="when">Sprint 3 · Days 61–90</div>
+          <div class="name">Harden &amp; Gate</div>
+        </div>
+        <div class="sp-body">
+          <ul>
+            <li>RPM across CHF + COPD + pneumonia · condition playbooks live</li>
+            <li>Care-manager dashboard with HRRP exposure rollup</li>
+            <li>Quarterly model-drift monitoring + re-calibration cadence set</li>
+            <li>Phase 2 ROI scorecard against Day-0 PPR baseline</li>
+            <li>Go/no-go gate with clinical, legal, financial sign-off</li>
+          </ul>
+        </div>
+        <div class="sp-foot"><span class="k">Gate exit</span><span class="v">Phase 2 funded · L2 closed</span></div>
+      </div>
+    </div>
+
+    <div class="sowhat" ><b>Discipline:</b>each sprint ends in a gated clinical review with written exit criteria — no pilot advances without a demonstrated save against the Day-0 PPR baseline.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">07 / 15</span></div>
+</section>
+
+<!-- SLIDE 8: 12-MONTH ROADMAP =================================== -->
+<section class="slide" data-section="07 · 12-Month Roadmap">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>07 · 12-Month Roadmap</span>
+    <span>08 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">12-Month Roadmap</div>
+    <h2 class="headline">Land → Prove → Scale. Each horizon unlocks the next.</h2>
+    <p class="deck-text">The three horizons compound. Horizon 1 funds and de-risks Horizon 2; Horizon 2 proves the clinical foundation that Horizon 3 scales across the system.</p>
+
+    <table class="horizons" >
+      <thead>
+        <tr>
+          <th style="width:20%">Horizon</th>
+          <th style="width:42%">Flagship capabilities delivered</th>
+          <th style="width:38%">Foundation built</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="horizon-tag">LAND</span>
+            <span class="horizon-when">Months 0–3</span>
+          </td>
+          <td>
+            <div class="flag">Readmission Forecaster pilot in 1 hospital; top-decile list daily</div>
+            <div class="flag">SHAP per-patient cards embedded in EHR sidebar</div>
+            <div class="flag">HRRP simulator v1 live for CFO / administrator</div>
+          </td>
+          <td class="foundation">
+            SPARCS + EHR extract · PPR baseline · HIPAA BAA · model governance
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="horizon-tag">PROVE</span>
+            <span class="horizon-when">Months 4–6</span>
+          </td>
+          <td>
+            <div class="flag">RPM live across CHF, COPD, pneumonia; IoT alerts to nurse queue</div>
+            <div class="flag">Care-manager workflow integrated; priority list in production</div>
+            <div class="flag">Clinical save measured against Day-0 PPR baseline</div>
+          </td>
+          <td class="foundation">
+            Governed clinical-data platform · FHIR integration · model-drift monitoring
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="horizon-tag">SCALE</span>
+            <span class="horizon-when">Months 7–12</span>
+          </td>
+          <td>
+            <div class="flag">System-wide rollout across all acute-care facilities</div>
+            <div class="flag">Condition-specific intervention playbooks for 8+ DRGs</div>
+            <div class="flag">Agentic care-manager workflow; real-time HRRP dashboard</div>
+          </td>
+          <td class="foundation">
+            Standing hospital AI product team owns the portfolio; no consultant lock-in
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sowhat" ><b>Month 12 target:</b>three flagship capabilities running at Level 3 maturity, measurable reduction in 30-day readmission rate against Day-0 baseline, and a defensible HRRP exposure forecast — not a pilot that quietly got shelved after the demo.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">08 / 15</span></div>
+</section>
+
+<!-- SLIDE 9: ARCHITECTURE ======================================= -->
+<section class="slide" data-section="08 · Architecture">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>08 · Architecture</span>
+    <span>09 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Architecture</div>
+    <h2 class="headline">Three layers, each built before anything above it is scaled.</h2>
+    <p class="deck-text">The layering is not a diagram; it is a sequencing rule. Scale Layer 3 onto an incomplete Layer 1 and the clinical trust debt compounds. We build bottom-up and harden as we go.</p>
+
+    <div class="arch-layers" >
+      <div class="layer">
+        <div class="lnum">01<span class="small">Layer</span></div>
+        <div>
+          <h4>Governed clinical-data platform</h4>
+          <div class="sub"><b>Sources:</b> EHR · claims · SPARCS · RPM IoT · wearables&nbsp;&nbsp;<b>Services:</b> FHIR / OMOP harmonization · lineage · PHI vault · RBAC · audit</div>
+        </div>
+        <div class="chip">Foundation</div>
+      </div>
+      <div class="layer dark">
+        <div class="lnum">02<span class="small">Layer</span></div>
+        <div>
+          <h4>AI services &amp; models</h4>
+          <div class="sub"><b>XGBoost</b>: tabular clinical risk scoring, 30-day all-cause · <b>SHAP</b>: per-patient explainability · <b>LLM (HIPAA-compliant)</b>: care-manager summarization, guideline RAG · continuous drift monitoring + re-calibration</div>
+        </div>
+        <div class="chip">Services</div>
+      </div>
+      <div class="layer">
+        <div class="lnum">03<span class="small">Layer</span></div>
+        <div>
+          <h4>Decision support &amp; interventions</h4>
+          <div class="sub"><b>Care-manager UI</b> · top-decile priority list · <b>RPM nurse queue</b> with condition-specific alerts · <b>HRRP simulator</b> for administrators · agentic follow-up workflows</div>
+        </div>
+        <div class="chip">Applications</div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--sci-blue);font-weight:700;margin-bottom:4px">Principles &amp; Exclusions</div>
+      <div class="exclusions">
+        <div class="excl">XGBoost for tabular clinical features; validated, explainable, audit-able</div>
+        <div class="excl">SHAP on every score; clinicians see the why, not just the what</div>
+        <div class="excl">FHIR + OMOP for interoperability; one pipeline, all payers</div>
+        <div class="excl">HIPAA BAA + SOC 2 Type II on every AI vendor in the stack</div>
+        <div class="excl x">No unvalidated deep-learning black boxes on PHI; clinical risk too high</div>
+        <div class="excl x">No non-HIPAA LLMs in clinical workflow; even for summarization</div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">09 / 15</span></div>
+</section>
+
+<!-- SLIDE 10: FUTURE ARCHITECTURE (evidence intelligence platform) ==== -->
+<section class="slide" data-section="09 · Future Architecture">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>09 · Future Architecture</span>
+    <span>10 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Future Work · Population Health Platform</div>
+    <h2 class="headline">Six layers, one population-health intelligence platform.</h2>
+    <p class="deck-text">Phase 1 earns the right to build this. Clinical data, claims, RPM signals, and patient-reported outcomes flow up through governance and AI into care-manager and administrator decision support, with human-in-the-loop validation at every layer so trust is engineered, not assumed.</p>
+
+    <div class="future-layers">
+      <div class="flayer">
+        <div class="fnum">01</div>
+        <div>
+          <h4>Data Sources</h4>
+          <div class="fsub">EHR · claims · SPARCS · RPM IoT · wearables · patient-reported outcomes · social determinants</div>
+        </div>
+        <div class="fchip">Ingest</div>
+      </div>
+      <div class="flayer">
+        <div class="fnum">02</div>
+        <div>
+          <h4>Data Integration &amp; Standardization</h4>
+          <div class="fsub">FHIR R4 · OMOP CDM · streaming pipelines · document ingestion · data-quality &amp; bias checks</div>
+        </div>
+        <div class="fchip">Normalize</div>
+      </div>
+      <div class="flayer">
+        <div class="fnum">03</div>
+        <div>
+          <h4>Governed Data Platform</h4>
+          <div class="fsub">Patient cohorts · DRG-indexed outcomes · metadata · lineage · RBAC · PHI vault · audit</div>
+        </div>
+        <div class="fchip">Govern</div>
+      </div>
+      <div class="flayer ai">
+        <div class="fnum">04</div>
+        <div>
+          <h4>AI Layer</h4>
+          <div class="fsub">XGBoost risk engine · SHAP explainability · LLM with RAG for guideline retrieval · vector DB over CMS DRGs, clinical protocols, published evidence</div>
+        </div>
+        <div class="fchip">Reason</div>
+      </div>
+      <div class="flayer">
+        <div class="fnum">05</div>
+        <div>
+          <h4>Decision Support</h4>
+          <div class="fsub">Care-manager priority lists · RPM nurse queues · HRRP financial simulator · physician alerts · clinical playbooks by condition</div>
+        </div>
+        <div class="fchip">Decide</div>
+      </div>
+      <div class="flayer">
+        <div class="fnum">06</div>
+        <div>
+          <h4>User &amp; Application Layer</h4>
+          <div class="fsub">Care managers · RPM nurses · physicians · administrators · CFO · APIs · dashboards · EHR sidebars</div>
+        </div>
+        <div class="fchip">Serve</div>
+      </div>
+    </div>
+
+    <div class="fgov">
+      <span class="fgov-k">Governance across all layers</span>
+      <span class="fgov-items">
+        <span>Explainability</span>
+        <span>HIPAA + HITECH</span>
+        <span>Human-in-the-Loop</span>
+        <span>CMS / HRRP compliance</span>
+        <span>NIST AI RMF</span>
+      </span>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">10 / 15</span></div>
+</section>
+
+<!-- SLIDE 11: GOVERNANCE ======================================== -->
+<section class="slide" data-section="10 · Governance">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>10 · Governance</span>
+    <span>11 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Operating Model &amp; Risk</div>
+    <h2 class="headline">Two new roles close the clinical-to-production gap.</h2>
+    <p class="deck-text">The Clinical AI Steering Committee is the right intake body; but it is not a delivery team. A Clinical AI Lead and an AI Security Partner are the minimum staffing addition needed to convert a risk score into a measurable readmission save.</p>
+
+    <div class="gov-row" >
+      <div class="org-chart">
+        <h4>Operating Model · Roles &amp; Responsibilities</h4>
+        <div class="org-role">
+          <span class="dot"></span>
+          <div>
+            <h5>Clinical AI Steering Committee</h5>
+            <div class="r-sub">Use-case intake · clinical risk-tier approval · gate reviews</div>
+          </div>
+          <span class="badge" style="background:var(--sci-muted-2);color:#fff">In place</span>
+        </div>
+        <div class="org-role new">
+          <span class="dot"></span>
+          <div>
+            <h5>Clinical AI Lead</h5>
+            <div class="r-sub">Roadmap ownership · model performance · clinical save tracking</div>
+          </div>
+          <span class="badge">New</span>
+        </div>
+        <div class="org-role new">
+          <span class="dot"></span>
+          <div>
+            <h5>AI Security Partner</h5>
+            <div class="r-sub">HIPAA BAA · SOC 2 · red-team · model drift + bias monitoring</div>
+          </div>
+          <span class="badge">New</span>
+        </div>
+        <div class="org-role gap">
+          <span class="dot"></span>
+          <div>
+            <h5>Clinical Data Steward</h5>
+            <div class="r-sub">FHIR lineage · PHI access policy · cohort curation · gap today</div>
+          </div>
+          <span class="badge">Gap</span>
+        </div>
+      </div>
+      <div class="tiers-risk">
+        <h4>Clinical AI Risk-Tier Classification</h4>
+        <div class="tier-risk t1">
+          <span class="tk">T1</span>
+          <span class="tl">Low</span>
+          <span class="td">Aggregate PPR dashboards · de-identified benchmarking · no PHI in prompt</span>
+        </div>
+        <div class="tier-risk t2">
+          <span class="tk">T2</span>
+          <span class="tl">Medium</span>
+          <span class="td">Risk scoring on de-identified cohorts · care-manager summarization; HIPAA BAA required</span>
+        </div>
+        <div class="tier-risk t3">
+          <span class="tk">T3</span>
+          <span class="tl">High</span>
+          <span class="td">Live PHI in predictive engine · per-patient SHAP · clinician-in-the-loop mandatory</span>
+        </div>
+        <div class="guardrails">
+          <h5>Clinical Guardrails</h5>
+          <ul>
+            <li>HIPAA BAA + SOC 2 Type II required on every T2/T3 AI vendor</li>
+            <li>NIST AI RMF alignment for all clinical-impact models</li>
+            <li>Quarterly model-drift &amp; bias audit · sub-population performance review</li>
+            <li>Red-team on SHAP reasoning · false-positive review with clinicians</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">10 / 15</span></div>
+</section>
+
+<!-- SLIDE 11: ADOPTION & KPIs =================================== -->
+<section class="slide" data-section="11 · Adoption &amp; KPIs">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>11 · Adoption &amp; KPIs</span>
+    <span>12 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Adoption &amp; KPIs</div>
+    <h2 class="headline">One headline metric, one leading indicator, one guardrail, per bet.</h2>
+    <p class="deck-text">Metrics that do not report on themselves every month are decorative. Each flagship capability has exactly three numbers that matter, and a guardrail that stops it if clinical trust is at risk.</p>
+
+    <div class="kpi-top" >
+      <div class="kcard"><div class="kv"><b>25%</b></div><div class="kl">Reduction in 30-day all-cause readmissions (top-decile cohort)</div></div>
+      <div class="kcard"><div class="kv"><b>7.6%</b></div><div class="kl">Target readmission rate; NY State PPR benchmark</div></div>
+      <div class="kcard"><div class="kv"><b>$562M</b></div><div class="kl">Annual savings at NY scale, 11.2% → 9.0% (per forecaster)</div></div>
+      <div class="kcard"><div class="kv"><b>5.2×</b></div><div class="kl">ROI on intervention cost (pro-forma, AHRQ-benchmarked)</div></div>
+    </div>
+
+    <table class="kpi-tbl" >
+      <thead>
+        <tr><th style="width:28%">Capability</th><th style="width:24%">Headline metric</th><th style="width:24%">Leading indicator</th><th style="width:24%">Guardrail</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Readmission Forecaster (XGBoost + SHAP)</td>
+          <td class="hl">25% hit rate in top-10% flagged</td>
+          <td>Model AUC ≥ 0.65 on rolling test · daily priority-list volume</td>
+          <td>No model update without clinical bias + sub-population review</td>
+        </tr>
+        <tr>
+          <td>RPM for Top Decile (CHF · COPD · Pneumonia)</td>
+          <td class="hl">≥20% reduction in 30-day readmits, monitored cohort</td>
+          <td>RPM enrollment rate · vitals-alert response time</td>
+          <td>Alert fatigue &lt; 15% · nurse queue SLA &lt; 4 hours</td>
+        </tr>
+        <tr>
+          <td>HRRP Financial Simulator</td>
+          <td class="hl">Monthly HRRP exposure forecast ± 5% of actual</td>
+          <td>Input-data freshness · administrator dashboard usage</td>
+          <td>CMS methodology sign-off · finance + compliance co-own</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="program-kpis"><b>Program KPIs</b>Clinical save vs. Day-0 baseline <span class="sep">|</span> ≤45-day intake → prod gate <span class="sep">|</span> quarterly model-drift review <span class="sep">|</span> zero PHI leakage incidents <span class="sep">|</span> red-team findings closed on cadence</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">11 / 15</span></div>
+</section>
+
+<!-- SLIDE 12: RISK & ADVISORY ================================== -->
+<section class="slide" data-section="12 · Risk &amp; Advisory">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>12 · Risk &amp; Advisory</span>
+    <span>13 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Risk &amp; Advisory</div>
+    <h2 class="headline">The risks are known and sequenced first. The RSM × SciEncephalon advisory is shaped around that sequence.</h2>
+    <p class="deck-text">Two things kill hospital AI programs: PHI gaps and pilot-to-prod gaps. Both are mitigated before flagship bets ship. RSM brings the healthcare consulting surface area; SciEncephalon AI brings the model and governance depth; capability stays with the hospital after the engagement.</p>
+
+    <div class="risk-row" >
+      <div class="risks-list">
+        <div style="font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--sci-blue);font-weight:800;margin-bottom:2px">Top Risks · Sequenced First</div>
+        <div class="risk">
+          <div class="rnum">01</div>
+          <div>
+            <h5>PHI leakage via prompt or model log</h5>
+            <div class="rmit"><b>Mitigation:</b>HIPAA BAA on every vendor · risk-tier classification · red-team · no non-compliant LLMs in clinical workflow</div>
+          </div>
+        </div>
+        <div class="risk">
+          <div class="rnum">02</div>
+          <div>
+            <h5>Model drift &amp; sub-population bias</h5>
+            <div class="rmit"><b>Mitigation:</b>quarterly drift audit · stratified performance by race / age / payer · retraining cadence tied to clinical review</div>
+          </div>
+        </div>
+        <div class="risk">
+          <div class="rnum">03</div>
+          <div>
+            <h5>Clinician adoption gap</h5>
+            <div class="rmit"><b>Mitigation:</b>SHAP on every score · embedded in EHR sidebar, not a separate portal · care-manager workflow shadowed before rollout</div>
+          </div>
+        </div>
+        <div class="risk">
+          <div class="rnum">04</div>
+          <div>
+            <h5>HRRP policy shift mid-deployment</h5>
+            <div class="rmit"><b>Mitigation:</b>simulator parameterized on CMS methodology · legal / compliance co-ownership · annual re-validation</div>
+          </div>
+        </div>
+      </div>
+      <div class="advisory">
+        <div class="bk">Advisory Team</div>
+        <div class="adv-brand"><span style="color:var(--rsm-green);-webkit-text-fill-color:var(--rsm-green);font-family:var(--font-body);font-weight:900;font-size:.8em;letter-spacing:.03em;margin-right:6px">RSM</span><span style="color:rgba(255,255,255,.5);font-size:.6em;margin:0 4px;font-weight:400;-webkit-text-fill-color:rgba(255,255,255,.5)">×</span><span class="adv-sci">Sci</span><span class="adv-enc">Encephalon</span><span class="adv-ai">AI</span></div>
+        <div class="bs">RSM US healthcare consulting + SciEncephalon AI model &amp; governance depth. Advisory only — not an implementation vendor. Capability stays with the hospital after the engagement.</div>
+        <div class="adv-list">
+          <div class="adv-item"><span class="adv-k">Strategy</span><span class="adv-v">Clinical roadmap · flagship sequencing · HRRP exposure modeling</span></div>
+          <div class="adv-item"><span class="adv-k">Architecture</span><span class="adv-v">FHIR / OMOP blueprint · XGBoost + SHAP stack · risk-tier framework</span></div>
+          <div class="adv-item"><span class="adv-k">Delivery</span><span class="adv-v">On-site clinical workshops · RPM nurse playbooks · gate-review facilitation</span></div>
+          <div class="adv-item"><span class="adv-k">Transfer</span><span class="adv-v">Knowledge transfer to standing hospital AI team; no consultant lock-in</span></div>
+        </div>
+        <div class="adv-credits">
+          <div>
+            <div class="adv-credit-k">Clinical &amp; Research</div>
+            <div class="adv-pill-list">
+              <span class="adv-pill">Harvard Medical</span>
+              <span class="adv-pill">MIT</span>
+              <span class="adv-pill">Teaching Hospitals</span>
+            </div>
+          </div>
+          <div>
+            <div class="adv-credit-k">Delivery Partner</div>
+            <div class="adv-pill-list">
+              <span class="adv-pill" style="background:rgba(67,176,42,.18);border-color:rgba(67,176,42,.4)">RSM US Healthcare</span>
+              <span class="adv-pill">NYC / National</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">12 / 15</span></div>
+</section>
+
+<!-- SLIDE 13: DECISIONS ========================================= -->
+<section class="slide" data-section="13 · Decisions">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>13 · Decisions · Next 30 Days</span>
+    <span>14 / 15</span>
+  </div>
+  <div class="body">
+    <div class="kicker">Decisions · Next 30 Days</div>
+    <h2 class="headline">What we need from the Clinical AI Committee to unlock Phase 1.</h2>
+    <p class="deck-text">Eight decisions, split across clinical-strategic and technical-compliance tracks. None is irreversible; all are sequencing commitments that clear the path for the first 90 days.</p>
+
+    <div class="decisions" >
+      <div class="dec-col">
+        <div class="dec-head">
+          <div class="dicon">S</div>
+          <div class="dttl">Clinical &amp; Strategic</div>
+        </div>
+        <h4>Portfolio &amp; Team</h4>
+        <ul>
+          <li>Confirm the <b>3 flagship capabilities</b>; Readmission Forecaster, RPM for top decile, HRRP Financial Simulator.</li>
+          <li>Approve <b>pilot hospital</b> and go-live date; the 90-day clock starts on SPARCS+EHR extract.</li>
+          <li>Approve <b>target team</b>; Clinical AI Lead, AI Security Partner, Clinical Data Steward, care-manager champion.</li>
+          <li>Confirm <b>Day-90 targets</b>: top-decile list in care-manager hands, SHAP in EHR, HRRP simulator v1 live.</li>
+        </ul>
+      </div>
+      <div class="dec-col dark">
+        <div class="dec-head">
+          <div class="dicon">T</div>
+          <div class="dttl">Technical &amp; Compliance</div>
+        </div>
+        <h4>Platforms &amp; Compliance</h4>
+        <ul>
+          <li>Lock <b>HIPAA BAA + SOC 2 Type II</b> across the AI stack before any PHI touches the pipeline.</li>
+          <li>Approve <b>FHIR + OMOP integration approach</b> for EHR, claims, SPARCS sources.</li>
+          <li>Confirm <b>XGBoost + SHAP</b> as the Phase 1 model stack; no black-box DL on PHI.</li>
+          <li>Sign off on <b>NIST AI RMF alignment</b> and quarterly model-drift audit cadence.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sowhat" ><b>Action:</b>confirm these eight at the next Clinical AI Committee meeting. The 90-day clock starts the day the SPARCS + EHR extract lands in the governed platform.</div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">13 / 15</span></div>
+</section>
+
+<!-- SLIDE 14: CLOSE ============================================= -->
+<section class="slide dark close-slide" data-section="Close">
+  <div class="chrome-top">
+    <span class="brand-lockup"><span class="bl-mark"><span class="bl-pc">READMISSION</span></span><span class="bl-ai-badge">AI</span><span class="bl-div"></span><span class="bl-sub">By <span class="bl-rsm">RSM</span><span class="bl-amp">+</span><span class="bl-brand"><span class="bl-sci">Sci</span><span class="bl-enc">Encephalon</span></span><span class="bl-ai-mini">AI</span></span></span>
+    <span>Closing</span>
+    <span>15 / 15</span>
+  </div>
+  <div class="close-inner">
+    <div class="close-brand">
+      <div class="close-mark"><span class="pc">READMISSION</span><span class="ai">AI</span></div>
+      <div class="close-rule"></div>
+      <div class="close-powered">
+        Delivered by <span style="color:#5ed647;-webkit-text-fill-color:#5ed647;font-family:var(--font-body);font-weight:900;font-size:16px;letter-spacing:.03em">RSM</span>
+        <span style="color:rgba(255,255,255,.5);-webkit-text-fill-color:rgba(255,255,255,.5)">×</span>
+        <span class="pow-brand"><span class="pow-sci">Sci</span><span class="pow-enc">Encephalon</span></span>
+        <span class="pow-ai">AI</span>
+      </div>
+    </div>
+    <div class="close-headline">
+      <div class="k">Closing Argument</div>
+      <div class="h1">Predictable, yet <span>preventable.</span></div>
+      <div class="body-text">Hospitals do not need to accept preventable readmissions as a cost of care. They need to sequence the capabilities that stop them — predictive first, interventional next, financial last — on a governed clinical-data foundation.</div>
+      <div class="close-highlights">
+        <div class="hl">
+          <span class="hv"><b>3</b></span>
+          <span class="hl-l">flagship capabilities</span>
+        </div>
+        <div class="hl">
+          <span class="hv"><b>25%</b></span>
+          <span class="hl-l">readmission reduction target</span>
+        </div>
+        <div class="hl">
+          <span class="hv"><b>$256M</b></span>
+          <span class="hl-l">saved per percentage point</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="chrome-bottom"><span>Confidential · RSM × SciEncephalon AI · 2026</span><span class="progress"><i></i></span><span class="counter-text">14 / 15</span></div>
+</section>
+
+</div>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button id="prev" aria-label="Previous">‹</button>
+  <div id="dots" style="display:flex;gap:4px"></div>
+  <span class="counter" id="counter">01 / 15</span>
+  <button id="next" aria-label="Next">›</button>
+</nav>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let idx = 0;
+
+  // build dots
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_,i)=>{
+    const d = document.createElement('span');
+    d.className='dot'+(i===0?' is-on':'');
+    d.addEventListener('click',()=>go(i));
+    dotsEl.appendChild(d);
+  });
+
+  function pad(n){ return String(n+1).padStart(2,'0'); }
+  function render(){
+    slides.forEach((s,i)=>{
+      s.classList.toggle('is-active', i===idx);
+      s.querySelectorAll('.progress>i').forEach(p=>p.style.setProperty('--p', ((idx)/(total-1)).toFixed(3) ));
+      s.querySelectorAll('.counter-text').forEach(c=>c.textContent = pad(idx)+' / '+pad(total-1));
+    });
+    dotsEl.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('is-on', i===idx));
+    document.getElementById('counter').textContent = pad(idx)+' / '+pad(total-1);
+  }
+  function go(i){
+    idx = Math.max(0, Math.min(total-1, i));
+    render();
+  }
+  document.getElementById('prev').addEventListener('click',()=>go(idx-1));
+  document.getElementById('next').addEventListener('click',()=>go(idx+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); go(idx+1); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(idx-1); }
+    if(e.key==='Home'){ e.preventDefault(); go(0); }
+    if(e.key==='End'){ e.preventDefault(); go(total-1); }
+  });
+  // swipe
+  let sx=null;
+  document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(sx==null)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>60){ dx<0?go(idx+1):go(idx-1); }
+    sx=null;
+  });
+
+  render();
+
+  // ---- Slide 6: cycle flagship highlight ----
+  const steps = document.querySelectorAll('#drop-demo .drop-step');
+  let k = 0;
+  setInterval(()=>{
+    steps.forEach(s=>s.classList.remove('is-hot'));
+    k = (k+1) % steps.length;
+    steps[k].classList.add('is-hot');
+  }, 2600);
+  steps.forEach((s,i)=>s.addEventListener('click',()=>{
+    steps.forEach(x=>x.classList.remove('is-hot'));
+    s.classList.add('is-hot');
+    k = i;
+  }));
+
+})();
+</script>
+</body>
+</html>
