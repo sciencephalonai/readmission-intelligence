@@ -285,6 +285,136 @@
         }
 
         /* ═══════════════════════════════════════
+           SCENARIO SLIDER (Slide 8)
+           ═══════════════════════════════════════ */
+        .scenario-wrap {
+            width: 880px;
+            margin: 18px auto 0;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(0,156,222,0.22);
+            border-radius: 18px;
+            padding: 22px 28px 20px;
+            z-index: 20;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        .scenario-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 0.55em;
+            color: rgba(255,255,255,0.65);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+        .scenario-head .rate-display {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3em;
+            font-weight: 900;
+            color: var(--health-green);
+            text-transform: none;
+            letter-spacing: 0;
+            text-shadow: 0 0 14px rgba(67,176,42,0.4);
+        }
+        .scenario-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--health-green) 0%, var(--health-amber) 55%, var(--health-red) 100%);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+        .scenario-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 18px var(--accent-glow);
+            cursor: pointer;
+        }
+        .scenario-slider::-moz-range-thumb {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 18px var(--accent-glow);
+            cursor: pointer;
+        }
+        .scenario-ticks {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.45em;
+            color: rgba(255,255,255,0.4);
+            margin-top: 6px;
+            letter-spacing: 0.05em;
+        }
+        .scenario-presets {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .scenario-preset {
+            background: rgba(0,156,222,0.08);
+            border: 1px solid rgba(0,156,222,0.35);
+            color: rgba(255,255,255,0.85);
+            font-size: 0.5em;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .scenario-preset:hover {
+            background: rgba(0,156,222,0.2);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .scenario-preset.active {
+            background: rgba(67,176,42,0.18);
+            border-color: var(--health-green);
+            color: #fff;
+        }
+        .scenario-outputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 18px;
+        }
+        .scenario-out {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+        .scenario-out .out-label {
+            font-size: 0.45em;
+            color: rgba(255,255,255,0.55);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .scenario-out .out-value {
+            font-size: 1.4em;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .scenario-out .out-value.green { color: var(--health-green); text-shadow: 0 0 16px rgba(67,176,42,0.35); }
+        .scenario-out .out-value.amber { color: var(--health-amber); }
+        .scenario-out .out-value.accent { color: var(--accent); }
+
+        /* ═══════════════════════════════════════
            FEATURE BARS
            ═══════════════════════════════════════ */
         .feature-bars {
@@ -999,34 +1129,126 @@
                 </div>
             </section>
 
-            <!-- ═══════ SLIDE 8 — LENGTH OF STAY ═══════ -->
+            <!-- ═══════ SLIDE 8 — SAVINGS SCENARIO ═══════ -->
             <section>
                 <div class="impact-container">
-                    <div class="impact-text" style="font-size: 1.2em;">
-                        The hidden <span class="accent-green">$6.4M</span> no one talks about
+                    <div class="impact-text" style="font-size: 1.1em;">
+                        Every point we cut is <span class="accent-green">$256M</span> back on the table
                     </div>
-                    <div class="stat-row">
+
+                    <div class="stat-row" style="margin-top: 10px;">
                         <div class="stat-card">
-                            <div class="stat-value">3.53</div>
-                            <div class="stat-label">Geometric Mean<br>LOS (days)</div>
+                            <div class="stat-value amber">11.2%</div>
+                            <div class="stat-label">Baseline Readmission<br>Rate (Internal Data)</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value amber">5.81</div>
-                            <div class="stat-label">Average LOS<br>(days)</div>
+                            <div class="stat-value">2.2M</div>
+                            <div class="stat-label">Patients<br>NY SPARCS</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value red">1.29</div>
-                            <div class="stat-label">LOS Index<br>(vs benchmark)</div>
+                            <div class="stat-value">5.81</div>
+                            <div class="stat-label">Avg LOS (days)<br>× $2,000/day</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value green">$6.4M</div>
-                            <div class="stat-label">Excess Stay<br>Cost Opportunity</div>
+                            <div class="stat-value red">$11,620</div>
+                            <div class="stat-label">Cost per<br>Readmission</div>
                         </div>
                     </div>
-                    <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 15px; z-index: 20; position: relative;">
-                        2.2M patients &nbsp;|&nbsp; Avg daily census: 34,969 &nbsp;|&nbsp; Flow efficiency: 61% &nbsp;|&nbsp; $2,000/day cost basis
+
+                    <div class="scenario-wrap">
+                        <div class="scenario-head">
+                            <span>Target readmission rate</span>
+                            <span class="rate-display"><span id="scenario-rate">9.0%</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">(−<span id="scenario-cut">20%</span> vs baseline)</span></span>
+                        </div>
+                        <input id="scenario-slider" class="scenario-slider" type="range" min="5.0" max="11.2" step="0.1" value="9.0">
+                        <div class="scenario-ticks">
+                            <span>5.0%</span>
+                            <span>7.0%</span>
+                            <span>8.4% (−25%)</span>
+                            <span>9.0%</span>
+                            <span>11.2% (baseline)</span>
+                        </div>
+
+                        <div class="scenario-presets">
+                            <button class="scenario-preset" data-rate="9.0">Reach 9.0%</button>
+                            <button class="scenario-preset" data-rate="8.4">25% cut (8.4%)</button>
+                            <button class="scenario-preset" data-rate="7.6">NY benchmark (7.6%)</button>
+                            <button class="scenario-preset" data-rate="7.0">Stretch: 7.0%</button>
+                        </div>
+
+                        <div class="scenario-outputs">
+                            <div class="scenario-out">
+                                <div class="out-label">Readmissions Avoided</div>
+                                <div class="out-value accent" id="scenario-avoided">48,400</div>
+                            </div>
+                            <div class="scenario-out">
+                                <div class="out-label">Patient-Days Saved</div>
+                                <div class="out-value amber" id="scenario-days">281,204</div>
+                            </div>
+                            <div class="scenario-out">
+                                <div class="out-label">Annual Savings</div>
+                                <div class="out-value green" id="scenario-savings">$562.4M</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 0.45em; color: rgba(255,255,255,0.4); margin-top: 12px; z-index: 20; position: relative;">
+                        Savings = (baseline − target) × 2.2M patients × 5.81 days × $2,000/day &nbsp;|&nbsp; Source: UCI Diabetes 130-US + NY SPARCS
                     </div>
                 </div>
+
+                <script>
+                    (function () {
+                        const PATIENTS = 2_200_000;
+                        const BASELINE = 0.112;
+                        const LOS = 5.81;
+                        const DAY_COST = 2000;
+                        const PER_READMIT = LOS * DAY_COST; // $11,620
+
+                        const slider = document.getElementById('scenario-slider');
+                        const rateEl = document.getElementById('scenario-rate');
+                        const cutEl = document.getElementById('scenario-cut');
+                        const avoidedEl = document.getElementById('scenario-avoided');
+                        const daysEl = document.getElementById('scenario-days');
+                        const savingsEl = document.getElementById('scenario-savings');
+                        const presets = document.querySelectorAll('.scenario-preset');
+
+                        const fmtMoney = (n) => {
+                            if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+                            if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+                            if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+                            return '$' + Math.round(n).toLocaleString();
+                        };
+                        const fmtInt = (n) => Math.round(n).toLocaleString();
+
+                        function update() {
+                            const target = parseFloat(slider.value) / 100;
+                            const delta = Math.max(0, BASELINE - target);
+                            const avoided = PATIENTS * delta;
+                            const days = avoided * LOS;
+                            const savings = avoided * PER_READMIT;
+                            const cut = BASELINE > 0 ? (delta / BASELINE) * 100 : 0;
+
+                            rateEl.textContent = (target * 100).toFixed(1) + '%';
+                            cutEl.textContent = cut.toFixed(0) + '%';
+                            avoidedEl.textContent = fmtInt(avoided);
+                            daysEl.textContent = fmtInt(days);
+                            savingsEl.textContent = fmtMoney(savings);
+
+                            presets.forEach(p => {
+                                p.classList.toggle('active', parseFloat(p.dataset.rate).toFixed(1) === parseFloat(slider.value).toFixed(1));
+                            });
+                        }
+
+                        slider.addEventListener('input', update);
+                        presets.forEach(p => p.addEventListener('click', () => {
+                            slider.value = p.dataset.rate;
+                            update();
+                        }));
+
+                        update();
+                    })();
+                </script>
             </section>
 
             <!-- ═══════ SLIDE 9 — SYSTEM ARCHITECTURE ═══════ -->
