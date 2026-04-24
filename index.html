@@ -292,16 +292,21 @@
            SOURCE STRIP (fine print, bottom of slide)
            ═══════════════════════════════════════ */
         .slide-sources {
+            position: absolute;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            padding: 0 40px;
+            max-width: 1180px;
             font-size: 0.32em;
             color: rgba(255,255,255,0.38);
-            margin: 18px auto 0;
-            max-width: 1100px;
             text-align: center;
             line-height: 1.55;
             letter-spacing: 0.02em;
-            z-index: 20;
-            position: relative;
+            z-index: 30;
             font-weight: 500;
+            box-sizing: border-box;
         }
         .slide-sources .sources-label {
             color: rgba(255,255,255,0.5);
@@ -1422,7 +1427,7 @@
                     <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 8px; z-index: 20; position: relative; line-height: 1.5;">
                         Savings = (baseline − target) × patients × LOS × day-cost &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81
                     </div>
-                    <div class="slide-sources" style="margin-top: 6px;">
+                    <div class="slide-sources">
                         <span class="sources-label">Sources:</span>
                         <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">UCI Diabetes 130-US</a> (11.2% baseline) &nbsp;·&nbsp;
                         <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS SPARCS</a> (2.2M patients, 34,969 census) &nbsp;·&nbsp;
