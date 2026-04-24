@@ -1132,8 +1132,8 @@
                             <div class="stat-label">Test AUC-ROC</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value green">88.8%</div>
-                            <div class="stat-label">Test Accuracy</div>
+                            <div class="stat-value green">25%</div>
+                            <div class="stat-label">Hit Rate in Top 10%<br>(vs 11.2% baseline)</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value amber">2.24×</div>
@@ -1312,6 +1312,15 @@
                                 <button class="scenario-preset los-preset" data-los="4.50">Target (4.5 d)</button>
                                 <button class="scenario-preset los-preset" data-los="5.81">Baseline (5.81 d)</button>
                             </div>
+
+                            <div class="scenario-head" style="margin-top:14px;">
+                                <span>Cost-per-day basis</span>
+                                <span class="rate-display" style="color: var(--health-red); text-shadow: 0 0 14px rgba(239,68,68,0.4);">$<span id="daycost-display">2,000</span> / day</span>
+                            </div>
+                            <div class="scenario-presets" style="margin-top:4px;">
+                                <button class="scenario-preset daycost-preset" data-daycost="2000">$2,000 (conservative)</button>
+                                <button class="scenario-preset daycost-preset" data-daycost="2800">$2,800 (AHA actual)</button>
+                            </div>
                         </div>
 
                         <!-- RIGHT: numbers -->
@@ -1336,7 +1345,7 @@
                             <div class="assumption-row">
                                 <div class="assumption-chip">
                                     <div class="chip-value amber">11.2%</div>
-                                    <div class="chip-label">Baseline Rate<br>(internal)</div>
+                                    <div class="chip-label">Baseline Rate<br>(UCI diabetes cohort)</div>
                                 </div>
                                 <div class="assumption-chip">
                                     <div class="chip-value accent" id="patients-value">2.2M</div>
@@ -1354,8 +1363,9 @@
                         </div>
                     </div>
 
-                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 10px; z-index: 20; position: relative;">
-                        Savings = (baseline − target) × patients × LOS × $2,000/day &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81 &nbsp;|&nbsp; Source: UCI Diabetes 130-US + NY SPARCS
+                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 10px; z-index: 20; position: relative; line-height: 1.5;">
+                        Savings = (baseline − target) × patients × LOS × day-cost &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81<br>
+                        Cross-checked vs. AHRQ HCUP &amp; CMS readmission data. $2K/day is conservative vs. AHA actual ~$2.8K/day (toggle above).
                     </div>
                 </div>
 
@@ -1363,7 +1373,7 @@
                     (function () {
                         const BASELINE = 0.112;
                         const BASELINE_LOS = 5.81; // fixed for patients/yr derivation
-                        const DAY_COST = 2000;
+                        let DAY_COST = 2000;
 
                         const rateSlider = document.getElementById('scenario-slider');
                         const censusSlider = document.getElementById('census-slider');
@@ -1378,13 +1388,15 @@
                         const patientsScopeEl = document.getElementById('patients-scope');
                         const losValueEl = document.getElementById('los-value');
                         const costPerValueEl = document.getElementById('cost-per-value');
+                        const daycostDisplayEl = document.getElementById('daycost-display');
                         const avoidedEl = document.getElementById('scenario-avoided');
                         const daysEl = document.getElementById('scenario-days');
                         const savingsEl = document.getElementById('scenario-savings');
                         const summaryEl = document.getElementById('scenario-savings-summary');
-                        const ratePresets = document.querySelectorAll('.scenario-preset:not(.census-preset):not(.los-preset)');
+                        const ratePresets = document.querySelectorAll('.scenario-preset:not(.census-preset):not(.los-preset):not(.daycost-preset)');
                         const censusPresets = document.querySelectorAll('.census-preset');
                         const losPresets = document.querySelectorAll('.los-preset');
+                        const daycostPresets = document.querySelectorAll('.daycost-preset');
 
                         const fmtMoney = (n) => {
                             if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
@@ -1429,6 +1441,7 @@
                             patientsScopeEl.textContent = scopeFor(census);
                             losValueEl.textContent = los.toFixed(2);
                             costPerValueEl.textContent = '$' + fmtInt(perReadmit);
+                            daycostDisplayEl.textContent = fmtInt(DAY_COST);
                             avoidedEl.textContent = fmtInt(avoided);
                             daysEl.textContent = fmtInt(days);
                             savingsEl.textContent = fmtMoney(savings);
@@ -1442,6 +1455,9 @@
                             });
                             losPresets.forEach(p => {
                                 p.classList.toggle('active', parseFloat(p.dataset.los).toFixed(2) === parseFloat(losSlider.value).toFixed(2));
+                            });
+                            daycostPresets.forEach(p => {
+                                p.classList.toggle('active', parseInt(p.dataset.daycost) === DAY_COST);
                             });
                         }
 
@@ -1458,6 +1474,10 @@
                         }));
                         losPresets.forEach(p => p.addEventListener('click', () => {
                             losSlider.value = p.dataset.los;
+                            update();
+                        }));
+                        daycostPresets.forEach(p => p.addEventListener('click', () => {
+                            DAY_COST = parseInt(p.dataset.daycost);
                             update();
                         }));
 
@@ -1590,7 +1610,7 @@
             <section>
                 <div class="impact-container">
                     <div class="impact-text" style="font-size: 1.1em;">
-                        Septicemia: where every hour<br>costs <span class="accent-red">$4,237</span>
+                        Septicemia: where every day<br>costs <span class="accent-red">$4,237</span>
                     </div>
                     <div class="stat-row">
                         <div class="stat-card">
@@ -1598,8 +1618,8 @@
                             <div class="stat-label">Average LOS<br>(days)</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">5.4</div>
-                            <div class="stat-label">Benchmark GMLOS<br>(days)</div>
+                            <div class="stat-value">4.5</div>
+                            <div class="stat-label">Benchmark GMLOS<br>(CMS DRG 871)</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value amber">144K</div>
