@@ -293,11 +293,11 @@
            ═══════════════════════════════════════ */
         .scenario-wrap {
             width: 880px;
-            margin: 18px auto 0;
+            margin: 14px auto 0;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(0,156,222,0.22);
-            border-radius: 18px;
-            padding: 22px 28px 20px;
+            border-radius: 16px;
+            padding: 14px 24px 14px;
             z-index: 20;
             position: relative;
             backdrop-filter: blur(10px);
@@ -306,12 +306,12 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            font-size: 0.55em;
+            font-size: 0.5em;
             color: rgba(255,255,255,0.65);
             letter-spacing: 0.08em;
             text-transform: uppercase;
             font-weight: 600;
-            margin-bottom: 14px;
+            margin-bottom: 6px;
         }
         .scenario-head .rate-display {
             font-family: 'Inter', sans-serif;
@@ -353,26 +353,26 @@
         .scenario-ticks {
             display: flex;
             justify-content: space-between;
-            font-size: 0.45em;
+            font-size: 0.4em;
             color: rgba(255,255,255,0.4);
-            margin-top: 6px;
+            margin-top: 4px;
             letter-spacing: 0.05em;
         }
         .scenario-presets {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
-            margin-top: 14px;
+            margin-top: 8px;
             flex-wrap: wrap;
         }
         .scenario-preset {
             background: rgba(0,156,222,0.08);
             border: 1px solid rgba(0,156,222,0.35);
             color: rgba(255,255,255,0.85);
-            font-size: 0.5em;
+            font-size: 0.42em;
             font-weight: 600;
             letter-spacing: 0.05em;
-            padding: 8px 14px;
+            padding: 6px 12px;
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -391,14 +391,14 @@
         .scenario-outputs {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 18px;
+            gap: 12px;
+            margin-top: 12px;
         }
         .scenario-out {
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.08);
             border-radius: 12px;
-            padding: 14px 10px;
+            padding: 10px 10px;
             text-align: center;
         }
         .scenario-out .out-label {
@@ -410,7 +410,7 @@
             margin-bottom: 6px;
         }
         .scenario-out .out-value {
-            font-size: 1.4em;
+            font-size: 1.2em;
             font-weight: 900;
             line-height: 1;
         }
@@ -1150,11 +1150,11 @@
                             <div class="stat-label">Patients / yr<br><span id="patients-scope">NY SPARCS</span></div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">5.81</div>
+                            <div class="stat-value" id="los-value">5.81</div>
                             <div class="stat-label">Avg LOS (days)<br>× $2,000/day</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value red">$11,620</div>
+                            <div class="stat-value red" id="cost-per-value">$11,620</div>
                             <div class="stat-label">Cost per<br>Readmission</div>
                         </div>
                     </div>
@@ -1180,9 +1180,9 @@
                             <button class="scenario-preset" data-rate="7.0">Stretch: 7.0%</button>
                         </div>
 
-                        <div class="scenario-head" style="margin-top:18px;">
-                            <span>Avg daily census <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(~bed count @ full occupancy)</span></span>
-                            <span class="rate-display" style="color: var(--accent); text-shadow: 0 0 14px var(--accent-glow);"><span id="census-value">34,969</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">≈ <span id="census-patients">2.2M</span> patients/yr</span></span>
+                        <div class="scenario-head" style="margin-top:12px;">
+                            <span>Avg daily census <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(~beds @ full occupancy)</span></span>
+                            <span class="rate-display" style="color: var(--accent); text-shadow: 0 0 14px var(--accent-glow);"><span id="census-value">34,969</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">≈ <span id="census-patients">2.2M</span> pts/yr</span></span>
                         </div>
                         <input id="census-slider" class="scenario-slider" type="range" min="300" max="35000" step="100" value="34969">
                         <div class="scenario-ticks">
@@ -1197,6 +1197,25 @@
                             <button class="scenario-preset census-preset" data-census="3000">Regional system (3K)</button>
                             <button class="scenario-preset census-preset" data-census="10000">Large IDN (10K)</button>
                             <button class="scenario-preset census-preset" data-census="34969">NY State (34,969)</button>
+                        </div>
+
+                        <div class="scenario-head" style="margin-top:12px;">
+                            <span>Avg length of stay <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(days per readmit)</span></span>
+                            <span class="rate-display" style="color: var(--health-amber); text-shadow: 0 0 14px rgba(245,158,11,0.4);"><span id="los-display">5.81</span> d &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">→ <span id="perstay-display">$11,620</span>/stay</span></span>
+                        </div>
+                        <input id="los-slider" class="scenario-slider" type="range" min="3.0" max="6.0" step="0.01" value="5.81">
+                        <div class="scenario-ticks">
+                            <span>3.0 (lean)</span>
+                            <span>4.0</span>
+                            <span>5.0</span>
+                            <span>5.81 (baseline)</span>
+                            <span>6.0</span>
+                        </div>
+
+                        <div class="scenario-presets">
+                            <button class="scenario-preset los-preset" data-los="3.00">Lean (3.0 d)</button>
+                            <button class="scenario-preset los-preset" data-los="4.50">Target (4.5 d)</button>
+                            <button class="scenario-preset los-preset" data-los="5.81">Baseline (5.81 d)</button>
                         </div>
 
                         <div class="scenario-outputs">
@@ -1215,31 +1234,36 @@
                         </div>
                     </div>
 
-                    <div style="font-size: 0.45em; color: rgba(255,255,255,0.4); margin-top: 10px; z-index: 20; position: relative;">
-                        Savings = (baseline − target) × patients × 5.81 days × $2,000/day &nbsp;|&nbsp; Patients = census × 365 ÷ LOS &nbsp;|&nbsp; Source: UCI Diabetes 130-US + NY SPARCS
+                    <div style="font-size: 0.4em; color: rgba(255,255,255,0.4); margin-top: 8px; z-index: 20; position: relative;">
+                        Savings = (baseline − target) × patients × LOS × $2,000/day &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81 &nbsp;|&nbsp; Source: UCI Diabetes 130-US + NY SPARCS
                     </div>
                 </div>
 
                 <script>
                     (function () {
                         const BASELINE = 0.112;
-                        const LOS = 5.81;
+                        const BASELINE_LOS = 5.81; // fixed for patients/yr derivation
                         const DAY_COST = 2000;
-                        const PER_READMIT = LOS * DAY_COST; // $11,620
 
                         const rateSlider = document.getElementById('scenario-slider');
                         const censusSlider = document.getElementById('census-slider');
+                        const losSlider = document.getElementById('los-slider');
                         const rateEl = document.getElementById('scenario-rate');
                         const cutEl = document.getElementById('scenario-cut');
                         const censusEl = document.getElementById('census-value');
                         const censusPatientsEl = document.getElementById('census-patients');
+                        const losDisplayEl = document.getElementById('los-display');
+                        const perstayDisplayEl = document.getElementById('perstay-display');
                         const patientsValueEl = document.getElementById('patients-value');
                         const patientsScopeEl = document.getElementById('patients-scope');
+                        const losValueEl = document.getElementById('los-value');
+                        const costPerValueEl = document.getElementById('cost-per-value');
                         const avoidedEl = document.getElementById('scenario-avoided');
                         const daysEl = document.getElementById('scenario-days');
                         const savingsEl = document.getElementById('scenario-savings');
-                        const ratePresets = document.querySelectorAll('.scenario-preset:not(.census-preset)');
+                        const ratePresets = document.querySelectorAll('.scenario-preset:not(.census-preset):not(.los-preset)');
                         const censusPresets = document.querySelectorAll('.census-preset');
+                        const losPresets = document.querySelectorAll('.los-preset');
 
                         const fmtMoney = (n) => {
                             if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
@@ -1264,20 +1288,26 @@
                         function update() {
                             const target = parseFloat(rateSlider.value) / 100;
                             const census = parseFloat(censusSlider.value);
-                            const patients = (census * 365) / LOS;
+                            const los = parseFloat(losSlider.value);
+                            const patients = (census * 365) / BASELINE_LOS;
+                            const perReadmit = los * DAY_COST;
 
                             const delta = Math.max(0, BASELINE - target);
                             const avoided = patients * delta;
-                            const days = avoided * LOS;
-                            const savings = avoided * PER_READMIT;
+                            const days = avoided * los;
+                            const savings = avoided * perReadmit;
                             const cut = BASELINE > 0 ? (delta / BASELINE) * 100 : 0;
 
                             rateEl.textContent = (target * 100).toFixed(1) + '%';
                             cutEl.textContent = cut.toFixed(0) + '%';
                             censusEl.textContent = fmtInt(census);
                             censusPatientsEl.textContent = fmtPatients(patients);
+                            losDisplayEl.textContent = los.toFixed(2);
+                            perstayDisplayEl.textContent = fmtMoney(perReadmit);
                             patientsValueEl.textContent = fmtPatients(patients);
                             patientsScopeEl.textContent = scopeFor(census);
+                            losValueEl.textContent = los.toFixed(2);
+                            costPerValueEl.textContent = '$' + fmtInt(perReadmit);
                             avoidedEl.textContent = fmtInt(avoided);
                             daysEl.textContent = fmtInt(days);
                             savingsEl.textContent = fmtMoney(savings);
@@ -1288,16 +1318,24 @@
                             censusPresets.forEach(p => {
                                 p.classList.toggle('active', parseInt(p.dataset.census) === parseInt(censusSlider.value));
                             });
+                            losPresets.forEach(p => {
+                                p.classList.toggle('active', parseFloat(p.dataset.los).toFixed(2) === parseFloat(losSlider.value).toFixed(2));
+                            });
                         }
 
                         rateSlider.addEventListener('input', update);
                         censusSlider.addEventListener('input', update);
+                        losSlider.addEventListener('input', update);
                         ratePresets.forEach(p => p.addEventListener('click', () => {
                             rateSlider.value = p.dataset.rate;
                             update();
                         }));
                         censusPresets.forEach(p => p.addEventListener('click', () => {
                             censusSlider.value = p.dataset.census;
+                            update();
+                        }));
+                        losPresets.forEach(p => p.addEventListener('click', () => {
+                            losSlider.value = p.dataset.los;
                             update();
                         }));
 
