@@ -292,15 +292,118 @@
            SCENARIO SLIDER (Slide 8)
            ═══════════════════════════════════════ */
         .scenario-wrap {
-            width: 880px;
-            margin: 14px auto 0;
+            width: 100%;
+            margin: 0;
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(0,156,222,0.22);
             border-radius: 16px;
-            padding: 14px 24px 14px;
+            padding: 16px 22px;
             z-index: 20;
             position: relative;
             backdrop-filter: blur(10px);
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 24px;
+            width: 1200px;
+            margin: 14px auto 0;
+            align-items: stretch;
+            z-index: 20;
+            position: relative;
+        }
+        .scenario-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .hero-savings {
+            background: linear-gradient(135deg, rgba(67,176,42,0.14), rgba(67,176,42,0.04));
+            border: 1px solid rgba(67,176,42,0.45);
+            border-radius: 16px;
+            padding: 18px 20px;
+            text-align: center;
+            box-shadow: 0 0 32px rgba(67,176,42,0.08) inset;
+        }
+        .hero-savings .hero-label {
+            font-size: 0.5em;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: rgba(255,255,255,0.65);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .hero-savings .hero-value {
+            font-size: 2.8em;
+            font-weight: 900;
+            color: var(--health-green);
+            text-shadow: 0 0 28px rgba(67,176,42,0.5);
+            line-height: 1;
+        }
+        .hero-savings .hero-detail {
+            font-size: 0.45em;
+            color: rgba(255,255,255,0.55);
+            margin-top: 8px;
+            letter-spacing: 0.02em;
+        }
+        .mini-outputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .mini-output {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+        .mini-output .mini-label {
+            font-size: 0.42em;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.55);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .mini-output .mini-value {
+            font-size: 1.3em;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .mini-output .mini-value.accent { color: var(--accent); }
+        .mini-output .mini-value.amber { color: var(--health-amber); }
+
+        .assumption-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 2px;
+        }
+        .assumption-chip {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+        .assumption-chip .chip-value {
+            font-size: 0.95em;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .assumption-chip .chip-value.amber { color: var(--health-amber); }
+        .assumption-chip .chip-value.red { color: var(--health-red); }
+        .assumption-chip .chip-value.accent { color: var(--accent); }
+        .assumption-chip .chip-label {
+            font-size: 0.35em;
+            color: rgba(255,255,255,0.55);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            line-height: 1.2;
         }
         .scenario-head {
             display: flex;
@@ -1140,101 +1243,106 @@
                         Every point we cut is <span class="accent-green">$256M</span> back on the table
                     </div>
 
-                    <div class="stat-row stat-row-compact" style="margin-top: 10px;">
-                        <div class="stat-card">
-                            <div class="stat-value amber">11.2%</div>
-                            <div class="stat-label">Baseline Readmission<br>Rate (Internal Data)</div>
+                    <div class="scenario-grid">
+                        <!-- LEFT: sliders -->
+                        <div class="scenario-wrap">
+                            <div class="scenario-head">
+                                <span>Target readmission rate</span>
+                                <span class="rate-display"><span id="scenario-rate">9.0%</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">(−<span id="scenario-cut">20%</span> vs baseline)</span></span>
+                            </div>
+                            <input id="scenario-slider" class="scenario-slider" type="range" min="5.0" max="11.2" step="0.1" value="9.0">
+                            <div class="scenario-ticks">
+                                <span>5.0%</span>
+                                <span>7.0%</span>
+                                <span>8.4%</span>
+                                <span>9.0%</span>
+                                <span>11.2%</span>
+                            </div>
+                            <div class="scenario-presets">
+                                <button class="scenario-preset" data-rate="9.0">9.0%</button>
+                                <button class="scenario-preset" data-rate="8.4">25% cut</button>
+                                <button class="scenario-preset" data-rate="7.6">NY (7.6%)</button>
+                                <button class="scenario-preset" data-rate="7.0">Stretch 7.0%</button>
+                            </div>
+
+                            <div class="scenario-head" style="margin-top:14px;">
+                                <span>Avg daily census <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(~beds)</span></span>
+                                <span class="rate-display" style="color: var(--accent); text-shadow: 0 0 14px var(--accent-glow);"><span id="census-value">34,969</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">≈ <span id="census-patients">2.2M</span> pts/yr</span></span>
+                            </div>
+                            <input id="census-slider" class="scenario-slider" type="range" min="300" max="35000" step="100" value="34969">
+                            <div class="scenario-ticks">
+                                <span>300</span>
+                                <span>3,000</span>
+                                <span>10,000</span>
+                                <span>34,969</span>
+                            </div>
+                            <div class="scenario-presets">
+                                <button class="scenario-preset census-preset" data-census="300">Hospital (300)</button>
+                                <button class="scenario-preset census-preset" data-census="3000">Regional (3K)</button>
+                                <button class="scenario-preset census-preset" data-census="10000">IDN (10K)</button>
+                                <button class="scenario-preset census-preset" data-census="34969">NY State</button>
+                            </div>
+
+                            <div class="scenario-head" style="margin-top:14px;">
+                                <span>Avg length of stay</span>
+                                <span class="rate-display" style="color: var(--health-amber); text-shadow: 0 0 14px rgba(245,158,11,0.4);"><span id="los-display">5.81</span> d &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">→ <span id="perstay-display">$11,620</span>/stay</span></span>
+                            </div>
+                            <input id="los-slider" class="scenario-slider" type="range" min="3.0" max="6.0" step="0.01" value="5.81">
+                            <div class="scenario-ticks">
+                                <span>3.0</span>
+                                <span>4.0</span>
+                                <span>5.0</span>
+                                <span>5.81</span>
+                                <span>6.0</span>
+                            </div>
+                            <div class="scenario-presets">
+                                <button class="scenario-preset los-preset" data-los="3.00">Lean (3.0 d)</button>
+                                <button class="scenario-preset los-preset" data-los="4.50">Target (4.5 d)</button>
+                                <button class="scenario-preset los-preset" data-los="5.81">Baseline (5.81 d)</button>
+                            </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="patients-value">2.2M</div>
-                            <div class="stat-label">Patients / yr<br><span id="patients-scope">NY SPARCS</span></div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="los-value">5.81</div>
-                            <div class="stat-label">Avg LOS (days)<br>× $2,000/day</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value red" id="cost-per-value">$11,620</div>
-                            <div class="stat-label">Cost per<br>Readmission</div>
+
+                        <!-- RIGHT: numbers -->
+                        <div class="scenario-numbers">
+                            <div class="hero-savings">
+                                <div class="hero-label">Annual Savings Opportunity</div>
+                                <div class="hero-value" id="scenario-savings">$562.4M</div>
+                                <div class="hero-detail">At <span id="scenario-savings-summary">9.0% target · NY SPARCS scale · 5.81 d LOS</span></div>
+                            </div>
+
+                            <div class="mini-outputs">
+                                <div class="mini-output">
+                                    <div class="mini-label">Readmissions Avoided</div>
+                                    <div class="mini-value accent" id="scenario-avoided">48,400</div>
+                                </div>
+                                <div class="mini-output">
+                                    <div class="mini-label">Patient-Days Saved</div>
+                                    <div class="mini-value amber" id="scenario-days">281,204</div>
+                                </div>
+                            </div>
+
+                            <div class="assumption-row">
+                                <div class="assumption-chip">
+                                    <div class="chip-value amber">11.2%</div>
+                                    <div class="chip-label">Baseline Rate<br>(internal)</div>
+                                </div>
+                                <div class="assumption-chip">
+                                    <div class="chip-value accent" id="patients-value">2.2M</div>
+                                    <div class="chip-label">Patients / yr<br><span id="patients-scope">NY SPARCS</span></div>
+                                </div>
+                                <div class="assumption-chip">
+                                    <div class="chip-value" id="los-value">5.81</div>
+                                    <div class="chip-label">Avg LOS<br>× $2,000 / day</div>
+                                </div>
+                                <div class="assumption-chip">
+                                    <div class="chip-value red" id="cost-per-value">$11,620</div>
+                                    <div class="chip-label">Cost per<br>Readmission</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="scenario-wrap">
-                        <div class="scenario-head">
-                            <span>Target readmission rate</span>
-                            <span class="rate-display"><span id="scenario-rate">9.0%</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">(−<span id="scenario-cut">20%</span> vs baseline)</span></span>
-                        </div>
-                        <input id="scenario-slider" class="scenario-slider" type="range" min="5.0" max="11.2" step="0.1" value="9.0">
-                        <div class="scenario-ticks">
-                            <span>5.0%</span>
-                            <span>7.0%</span>
-                            <span>8.4% (−25%)</span>
-                            <span>9.0%</span>
-                            <span>11.2% (baseline)</span>
-                        </div>
-
-                        <div class="scenario-presets">
-                            <button class="scenario-preset" data-rate="9.0">Reach 9.0%</button>
-                            <button class="scenario-preset" data-rate="8.4">25% cut (8.4%)</button>
-                            <button class="scenario-preset" data-rate="7.6">NY benchmark (7.6%)</button>
-                            <button class="scenario-preset" data-rate="7.0">Stretch: 7.0%</button>
-                        </div>
-
-                        <div class="scenario-head" style="margin-top:12px;">
-                            <span>Avg daily census <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(~beds @ full occupancy)</span></span>
-                            <span class="rate-display" style="color: var(--accent); text-shadow: 0 0 14px var(--accent-glow);"><span id="census-value">34,969</span> &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">≈ <span id="census-patients">2.2M</span> pts/yr</span></span>
-                        </div>
-                        <input id="census-slider" class="scenario-slider" type="range" min="300" max="35000" step="100" value="34969">
-                        <div class="scenario-ticks">
-                            <span>300 (community hosp.)</span>
-                            <span>3,000</span>
-                            <span>10,000</span>
-                            <span>34,969 (NY State)</span>
-                        </div>
-
-                        <div class="scenario-presets">
-                            <button class="scenario-preset census-preset" data-census="300">Single hospital (300)</button>
-                            <button class="scenario-preset census-preset" data-census="3000">Regional system (3K)</button>
-                            <button class="scenario-preset census-preset" data-census="10000">Large IDN (10K)</button>
-                            <button class="scenario-preset census-preset" data-census="34969">NY State (34,969)</button>
-                        </div>
-
-                        <div class="scenario-head" style="margin-top:12px;">
-                            <span>Avg length of stay <span style="color:rgba(255,255,255,0.35); font-weight:500; text-transform:none; letter-spacing:0;">(days per readmit)</span></span>
-                            <span class="rate-display" style="color: var(--health-amber); text-shadow: 0 0 14px rgba(245,158,11,0.4);"><span id="los-display">5.81</span> d &nbsp;<span style="font-size:0.55em; color:rgba(255,255,255,0.45); font-weight:500;">→ <span id="perstay-display">$11,620</span>/stay</span></span>
-                        </div>
-                        <input id="los-slider" class="scenario-slider" type="range" min="3.0" max="6.0" step="0.01" value="5.81">
-                        <div class="scenario-ticks">
-                            <span>3.0 (lean)</span>
-                            <span>4.0</span>
-                            <span>5.0</span>
-                            <span>5.81 (baseline)</span>
-                            <span>6.0</span>
-                        </div>
-
-                        <div class="scenario-presets">
-                            <button class="scenario-preset los-preset" data-los="3.00">Lean (3.0 d)</button>
-                            <button class="scenario-preset los-preset" data-los="4.50">Target (4.5 d)</button>
-                            <button class="scenario-preset los-preset" data-los="5.81">Baseline (5.81 d)</button>
-                        </div>
-
-                        <div class="scenario-outputs">
-                            <div class="scenario-out">
-                                <div class="out-label">Readmissions Avoided</div>
-                                <div class="out-value accent" id="scenario-avoided">48,400</div>
-                            </div>
-                            <div class="scenario-out">
-                                <div class="out-label">Patient-Days Saved</div>
-                                <div class="out-value amber" id="scenario-days">281,204</div>
-                            </div>
-                            <div class="scenario-out">
-                                <div class="out-label">Annual Savings</div>
-                                <div class="out-value green" id="scenario-savings">$562.4M</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="font-size: 0.4em; color: rgba(255,255,255,0.4); margin-top: 8px; z-index: 20; position: relative;">
+                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 10px; z-index: 20; position: relative;">
                         Savings = (baseline − target) × patients × LOS × $2,000/day &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81 &nbsp;|&nbsp; Source: UCI Diabetes 130-US + NY SPARCS
                     </div>
                 </div>
@@ -1261,6 +1369,7 @@
                         const avoidedEl = document.getElementById('scenario-avoided');
                         const daysEl = document.getElementById('scenario-days');
                         const savingsEl = document.getElementById('scenario-savings');
+                        const summaryEl = document.getElementById('scenario-savings-summary');
                         const ratePresets = document.querySelectorAll('.scenario-preset:not(.census-preset):not(.los-preset)');
                         const censusPresets = document.querySelectorAll('.census-preset');
                         const losPresets = document.querySelectorAll('.los-preset');
@@ -1311,6 +1420,7 @@
                             avoidedEl.textContent = fmtInt(avoided);
                             daysEl.textContent = fmtInt(days);
                             savingsEl.textContent = fmtMoney(savings);
+                            summaryEl.textContent = (target * 100).toFixed(1) + '% target · ' + scopeFor(census) + ' · ' + los.toFixed(2) + ' d LOS';
 
                             ratePresets.forEach(p => {
                                 p.classList.toggle('active', parseFloat(p.dataset.rate).toFixed(1) === parseFloat(rateSlider.value).toFixed(1));
