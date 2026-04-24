@@ -289,6 +289,39 @@
         .stat-row-compact .stat-label { font-size: 0.5em; margin-top: 6px; }
 
         /* ═══════════════════════════════════════
+           SOURCE STRIP (fine print, bottom of slide)
+           ═══════════════════════════════════════ */
+        .slide-sources {
+            font-size: 0.32em;
+            color: rgba(255,255,255,0.38);
+            margin: 18px auto 0;
+            max-width: 1100px;
+            text-align: center;
+            line-height: 1.55;
+            letter-spacing: 0.02em;
+            z-index: 20;
+            position: relative;
+            font-weight: 500;
+        }
+        .slide-sources .sources-label {
+            color: rgba(255,255,255,0.5);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-right: 4px;
+        }
+        .slide-sources a {
+            color: rgba(0,156,222,0.75);
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(0,156,222,0.35);
+            transition: all 0.2s ease;
+        }
+        .slide-sources a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* ═══════════════════════════════════════
            SCENARIO SLIDER (Slide 8)
            ═══════════════════════════════════════ */
         .scenario-wrap {
@@ -1025,6 +1058,13 @@
                             <div class="stat-label">Gap<br>Above Benchmark</div>
                         </div>
                     </div>
+                    <div class="slide-sources">
+                        <span class="sources-label">Sources:</span>
+                        <a href="https://www.nejm.org/doi/full/10.1056/NEJMsa0803563" target="_blank" rel="noopener">Jencks et al., NEJM 2009</a> ($17B Medicare readmissions) &nbsp;·&nbsp;
+                        <a href="https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions" target="_blank" rel="noopener">CMS HRRP</a> (3% max penalty) &nbsp;·&nbsp;
+                        <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">UCI Diabetes 130-US</a> (11.2% internal rate) &nbsp;·&nbsp;
+                        <a href="https://www.health.ny.gov/statistics/sparcs/reports/" target="_blank" rel="noopener">NYS DOH PPR reports</a> (7.6% NY benchmark)
+                    </div>
                 </div>
             </section>
 
@@ -1113,6 +1153,12 @@
                             <div class="pipeline-sub">Insulin, metformin</div>
                         </div>
                     </div>
+                    <div class="slide-sources">
+                        <span class="sources-label">Sources:</span>
+                        <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">UCI ML Repository — Diabetes 130-US</a>
+                        (<a href="https://www.hindawi.com/journals/bmri/2014/781670/" target="_blank" rel="noopener">Strack et al., BioMed Research Int'l 2014</a>) &nbsp;·&nbsp;
+                        <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS DOH SPARCS</a>
+                    </div>
                 </div>
             </section>
 
@@ -1142,6 +1188,16 @@
                     </div>
                     <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 20px; z-index: 20; position: relative;">
                         XGBoost Ensemble &nbsp;|&nbsp; SMOTE for class imbalance &nbsp;|&nbsp; SHAP for explainability
+                    </div>
+                    <div class="slide-sources">
+                        <span class="sources-label">Sources:</span>
+                        Internal XGBoost model trained on
+                        <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">UCI Diabetes 130-US</a>
+                        (stratified 80/20 train/test, 5-fold CV) &nbsp;·&nbsp;
+                        Hit rate = 11.2% baseline × 2.24 top-decile lift &nbsp;·&nbsp;
+                        Libraries:
+                        <a href="https://xgboost.readthedocs.io/" target="_blank" rel="noopener">XGBoost</a>,
+                        <a href="https://github.com/shap/shap" target="_blank" rel="noopener">SHAP</a>
                     </div>
                 </div>
             </section>
@@ -1363,9 +1419,16 @@
                         </div>
                     </div>
 
-                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 10px; z-index: 20; position: relative; line-height: 1.5;">
-                        Savings = (baseline − target) × patients × LOS × day-cost &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81<br>
-                        Cross-checked vs. AHRQ HCUP &amp; CMS readmission data. $2K/day is conservative vs. AHA actual ~$2.8K/day (toggle above).
+                    <div style="font-size: 0.38em; color: rgba(255,255,255,0.4); margin-top: 8px; z-index: 20; position: relative; line-height: 1.5;">
+                        Savings = (baseline − target) × patients × LOS × day-cost &nbsp;|&nbsp; Patients/yr = census × 365 ÷ 5.81
+                    </div>
+                    <div class="slide-sources" style="margin-top: 6px;">
+                        <span class="sources-label">Sources:</span>
+                        <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">UCI Diabetes 130-US</a> (11.2% baseline) &nbsp;·&nbsp;
+                        <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS SPARCS</a> (2.2M patients, 34,969 census) &nbsp;·&nbsp;
+                        <a href="https://hcup-us.ahrq.gov/reports/statbriefs/" target="_blank" rel="noopener">AHRQ HCUP</a> (5.81 d LOS) &nbsp;·&nbsp;
+                        <a href="https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions" target="_blank" rel="noopener">CMS HRRP</a> (~$11,200 per readmission) &nbsp;·&nbsp;
+                        <a href="https://www.aha.org/statistics/fast-facts-us-hospitals" target="_blank" rel="noopener">AHA Hospital Statistics</a> (conservative $2K vs. actual ~$2.8K per day)
                     </div>
                 </div>
 
@@ -1603,6 +1666,15 @@
                             <div class="pipeline-sub">Lower penalty exposure</div>
                         </div>
                     </div>
+                    <div class="slide-sources">
+                        <span class="sources-label">Sources:</span>
+                        Illustrative pro-forma for a mid-size system. Methodology per
+                        <a href="https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions" target="_blank" rel="noopener">CMS HRRP</a>
+                        (excess readmission ratio × base IPPS payments, capped at 3%) &nbsp;·&nbsp;
+                        ROI benchmark:
+                        <a href="https://www.ahrq.gov/patient-safety/settings/hospital/resource/guide/transition.html" target="_blank" rel="noopener">AHRQ Care Transitions</a>
+                        (published RPM ROI 3–8×)
+                    </div>
                 </div>
             </section>
 
@@ -1632,6 +1704,15 @@
                     </div>
                     <div style="font-size: 0.5em; color: rgba(255,255,255,0.45); margin-top: 15px; z-index: 20; position: relative;">
                         471,718 excess patient-days annually &nbsp;|&nbsp; LOS Index: 1.73 &nbsp;|&nbsp; Highest cost DRG in the system
+                    </div>
+                    <div class="slide-sources">
+                        <span class="sources-label">Sources:</span>
+                        <a href="https://hcup-us.ahrq.gov/reports/statbriefs/sb261-Septicemia-Hospital-Stays-2018.jsp" target="_blank" rel="noopener">AHRQ HCUP Statistical Brief #261</a>
+                        (sepsis LOS, avg cost) &nbsp;·&nbsp;
+                        <a href="https://www.cms.gov/medicare/payment/prospective-payment-systems/acute-inpatient-pps" target="_blank" rel="noopener">CMS IPPS FY2024 Final Rule</a>
+                        (DRG 871 GMLOS = 4.5 d) &nbsp;·&nbsp;
+                        <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS SPARCS</a>
+                        (144K annual NY sepsis discharges)
                     </div>
                 </div>
             </section>
