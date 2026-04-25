@@ -85,8 +85,10 @@
   .slide{
     position:absolute;
     inset:0;
-    display:grid;
-    grid-template-rows:auto 1fr auto;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
     gap:10px;
     padding:clamp(14px,2.2vw,28px) clamp(20px,3.1vw,46px) clamp(20px,2.4vw,38px);
     background:#fff;
@@ -96,6 +98,9 @@
     pointer-events:none;
     overflow:hidden;
   }
+  .slide > .chrome-top{flex:0 0 auto}
+  .slide > .body{flex:1 1 auto;min-height:0}
+  .slide > .chrome-bottom{flex:0 0 auto;margin-top:auto}
   .slide.is-active{
     opacity:1;
     transform:none;
