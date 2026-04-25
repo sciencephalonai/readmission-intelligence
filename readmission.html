@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Inter:wght@300;400;500;600;700;800;900&amp;family=Quicksand:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <style>
   :root{
     /* Canonical SciEncephalon brand palette
@@ -299,7 +300,7 @@
     display:grid;
     gap:clamp(12px,1.2vw,18px);
   }
-  .body > :is(.grid,.flow,.feature-card,.table-wrap,.tier-grid,.scenario-grid,.arch-flow,.explain-grid,.partner-grid,.decisions-grid){
+  .body > :is(.grid,.flow,.feature-card,.table-wrap,.tier-grid,.scenario-grid,.arch-flow,.explain-grid,.partner-grid,.decisions-grid,.chart-row,.chart-full){
     flex:1 1 auto;
     min-height:0;
   }
@@ -1147,6 +1148,68 @@
     color:var(--sci-muted-2);
   }
 
+  /* ---------- ECharts containers (McKinsey-style visualizations) ---------- */
+  .chart-row{
+    display:grid;
+    grid-template-columns:1.05fr 1fr;
+    gap:18px;
+    align-items:stretch;
+    flex:1 1 auto;
+    min-height:0;
+  }
+  .chart-row.reverse{grid-template-columns:1fr 1.05fr}
+  .chart-card{
+    background:#fff;
+    border:1px solid var(--sci-hair);
+    border-radius:18px;
+    padding:18px 20px 14px;
+    box-shadow:0 18px 36px -30px rgba(15,23,42,.22);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-height:0;
+  }
+  .chart-card .chart-eyebrow{
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--sci-blue);
+    font-weight:700;
+  }
+  .chart-card .chart-title{
+    font-family:var(--font-disp);
+    font-size:18px;
+    font-weight:700;
+    color:var(--sci-navy);
+    line-height:1.25;
+  }
+  .chart-card .chart-canvas{
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    height:100%;
+  }
+  .chart-card .chart-foot{
+    font-size:12px;
+    color:var(--sci-muted-2);
+    line-height:1.4;
+    padding-top:6px;
+    border-top:1px dashed var(--sci-hair);
+  }
+  .chart-card .chart-foot b{color:var(--sci-blue);font-weight:700}
+  .chart-full{
+    background:#fff;
+    border:1px solid var(--sci-hair);
+    border-radius:18px;
+    padding:16px 20px;
+    box-shadow:0 18px 36px -30px rgba(15,23,42,.22);
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    flex:1 1 auto;
+    min-height:0;
+  }
+
   /* ---------- Decisions / Next 30 Days (slide 13) ---------- */
   .decisions-grid{
     display:grid;
@@ -1925,29 +1988,40 @@
     <div class="body">
       <div class="kicker">Lift Analysis</div>
       <h2 class="headline">The top <span class="accent">10%</span> of patients account for <span class="accent">22.4%</span> of readmissions.</h2>
-      <p class="deck-text">The implication is focus: concentrate intervention resources where the model says the yield is highest.</p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Population</th>
-              <th>Patients</th>
-              <th>Readmitted</th>
-              <th>Rate</th>
-              <th>Lift</th>
-              <th>Cumulative Gain</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Top 10%</td><td>1,471</td><td>372</td><td>25.3%</td><td>2.24x</td><td>22.4%</td></tr>
-            <tr><td>Top 20%</td><td>2,942</td><td>628</td><td>21.3%</td><td>1.89x</td><td>37.8%</td></tr>
-            <tr><td>Top 30%</td><td>4,413</td><td>849</td><td>19.2%</td><td>1.70x</td><td>51.1%</td></tr>
-            <tr><td>Top 40%</td><td>5,883</td><td>1,033</td><td>17.6%</td><td>1.56x</td><td>62.2%</td></tr>
-            <tr><td>Top 50%</td><td>7,354</td><td>1,180</td><td>16.0%</td><td>1.42x</td><td>71.1%</td></tr>
-          </tbody>
-        </table>
+      <p class="deck-text">The implication is focus: concentrate intervention resources where the model says the yield is highest. The shape of the curve is what matters &mdash; the steeper the early rise, the more value targeted intervention captures per dollar spent.</p>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-eyebrow">Cumulative Gain</div>
+          <div class="chart-title">Capture rate vs. random targeting</div>
+          <div id="gain-chart" class="chart-canvas"></div>
+          <div class="chart-foot">At <b>top 10%</b> of patients flagged, the model captures <b>2.24&times;</b> more readmissions than random selection.</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-eyebrow">Decile Detail</div>
+          <div class="chart-title">Yield by population segment</div>
+          <div class="table-wrap" style="flex:1 1 auto;min-height:0;overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Population</th>
+                  <th>Patients</th>
+                  <th>Readmits</th>
+                  <th>Rate</th>
+                  <th>Lift</th>
+                  <th>Capture</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Top 10%</td><td>1,471</td><td>372</td><td>25.3%</td><td>2.24x</td><td>22.4%</td></tr>
+                <tr><td>Top 20%</td><td>2,942</td><td>628</td><td>21.3%</td><td>1.89x</td><td>37.8%</td></tr>
+                <tr><td>Top 30%</td><td>4,413</td><td>849</td><td>19.2%</td><td>1.70x</td><td>51.1%</td></tr>
+                <tr><td>Top 40%</td><td>5,883</td><td>1,033</td><td>17.6%</td><td>1.56x</td><td>62.2%</td></tr>
+                <tr><td>Top 50%</td><td>7,354</td><td>1,180</td><td>16.0%</td><td>1.42x</td><td>71.1%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="micro-note">Targeting the top 10% of patients captures 22.4% of all readmissions - more than double random.</div>
       <div class="sources">
         <span class="label">Sources:</span>
         Lift table computed on held-out test split of
@@ -1991,31 +2065,30 @@
     <div class="body">
       <div class="kicker">Risk Stratification</div>
       <h2 class="headline">Risk should dictate the <span class="accent">discharge strategy.</span></h2>
-      <p class="deck-text">Scores create value only when they change the care path. Each band maps to a distinct intervention model with a defined cost envelope; the threshold cutoffs follow the calibrated probability output, not arbitrary clinical heuristics.</p>
-      <div class="tier-grid">
-        <div class="tier">
-          <div class="tier-badge high">
-            <div>&gt; 0.7</div>
-            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">High</div>
-          </div>
-          <div class="tier-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--health-red)"></i> Immediate Intervention</div>
-          <div class="tier-text">RPM kit + care coordination.</div>
+      <p class="deck-text">Scores create value only when they change the care path. The model produces a calibrated probability distribution; three thresholds split the population into operationally distinct intervention bands.</p>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-eyebrow">Population Distribution</div>
+          <div class="chart-title">How risk scores spread across discharges</div>
+          <div id="risk-dist-chart" class="chart-canvas"></div>
+          <div class="chart-foot"><b>~10%</b> high-risk &middot; <b>~28%</b> moderate &middot; <b>~62%</b> low &mdash; matches calibration on UCI test split.</div>
         </div>
-        <div class="tier">
-          <div class="tier-badge moderate">
-            <div>0.4 - 0.7</div>
-            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">Moderate</div>
+        <div class="tier-grid" style="grid-template-columns:1fr;gap:10px;flex:1 1 auto;min-height:0">
+          <div class="tier" style="padding:14px 18px">
+            <div class="tier-badge high"><div>&gt; 0.7</div><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">High</div></div>
+            <div class="tier-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--health-red)"></i> Immediate Intervention</div>
+            <div class="tier-text">RPM kit + care coordination &middot; ~10% of cohort &middot; captures 22% of readmits.</div>
           </div>
-          <div class="tier-title"><i class="fa-solid fa-phone" style="color:var(--health-amber)"></i> Tele-Health Follow-up</div>
-          <div class="tier-text">48hr post-discharge call.</div>
-        </div>
-        <div class="tier">
-          <div class="tier-badge low">
-            <div>&lt; 0.4</div>
-            <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">Low</div>
+          <div class="tier" style="padding:14px 18px">
+            <div class="tier-badge moderate"><div>0.4 - 0.7</div><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">Moderate</div></div>
+            <div class="tier-title"><i class="fa-solid fa-phone" style="color:var(--health-amber)"></i> Tele-Health Follow-up</div>
+            <div class="tier-text">48hr post-discharge call &middot; ~28% of cohort &middot; captures additional 40%.</div>
           </div>
-          <div class="tier-title"><i class="fa-solid fa-check-circle" style="color:var(--health-green)"></i> Standard Discharge</div>
-          <div class="tier-text">Normal instructions.</div>
+          <div class="tier" style="padding:14px 18px">
+            <div class="tier-badge low"><div>&lt; 0.4</div><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase">Low</div></div>
+            <div class="tier-title"><i class="fa-solid fa-check-circle" style="color:var(--health-green)"></i> Standard Discharge</div>
+            <div class="tier-text">Standard instructions &middot; ~62% of cohort &middot; lowest yield, highest volume.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2330,51 +2403,15 @@
     </div>
     <div class="body">
       <div class="kicker">Financial Impact</div>
-      <h2 class="headline"><span class="accent-green">$2.8M</span> can be returned in year one.</h2>
-      <p class="deck-text">A narrow, high-yield intervention model turns predictive lift into lower penalty exposure and attractive first-year economics. The math: target 1,471 patients (top decile of a single-hospital cohort), reduce 30-day readmissions on that cohort by ~25%, and recover roughly two thirds of baseline HRRP exposure.</p>
-      <div class="grid c3">
-        <div class="card metric">
-          <div class="eyebrow">Baseline Exposure</div>
-          <div class="value red">$4.2M</div>
-          <div class="label">Baseline HRRP Penalty Exposure</div>
+      <h2 class="headline">From <span class="accent-red">$4.2M</span> exposure to <span class="accent-green">$1.4M</span> &mdash; a <span class="accent">5.2&times;</span> return.</h2>
+      <p class="deck-text">The bridge from baseline HRRP exposure to net penalty after intervention. Target the top decile (1,471 patients), pay for RPM + tele-health, and recover roughly two thirds of penalty exposure in year one.</p>
+      <div class="chart-row">
+        <div class="chart-card" style="grid-column:1 / -1">
+          <div class="chart-eyebrow">HRRP Penalty Bridge &middot; Year 1, Mid-Size System</div>
+          <div class="chart-title">Baseline exposure &rarr; Net penalty after intervention</div>
+          <div id="bridge-chart" class="chart-canvas"></div>
+          <div class="chart-foot">Methodology: <a href="https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions" target="_blank" rel="noopener">CMS HRRP</a> (excess readmission ratio &times; base IPPS payments, capped at 3%) &nbsp;&middot;&nbsp; ROI benchmark: <a href="https://www.ahrq.gov/patient-safety/settings/hospital/resource/guide/transition.html" target="_blank" rel="noopener">AHRQ Care Transitions</a> (published RPM ROI 3&ndash;8&times;).</div>
         </div>
-        <div class="card metric">
-          <div class="eyebrow">Illustrative Savings</div>
-          <div class="value green">$2.8M</div>
-          <div class="label">Projected Annual Savings</div>
-        </div>
-        <div class="card metric">
-          <div class="eyebrow">Return</div>
-          <div class="value">5.2x</div>
-          <div class="label">ROI on Intervention Cost</div>
-        </div>
-      </div>
-      <div class="grid c3">
-        <div class="card">
-          <div class="eyebrow">Step 1</div>
-          <div class="metric value" style="font-size:26px;color:var(--rsm-blue)"><i class="fa-solid fa-bullseye"></i></div>
-          <div class="label"><b>Target Top 10%</b><br>1,471 patients per cohort</div>
-        </div>
-        <div class="card">
-          <div class="eyebrow">Step 2</div>
-          <div class="metric value" style="font-size:26px;color:var(--health-green)"><i class="fa-solid fa-heart-pulse"></i></div>
-          <div class="label"><b>RPM + Tele-Health</b><br>Post-discharge monitoring</div>
-        </div>
-        <div class="card">
-          <div class="eyebrow">Step 3</div>
-          <div class="metric value" style="font-size:26px;color:var(--health-green)"><i class="fa-solid fa-chart-line"></i></div>
-          <div class="label"><b>Reduce Readmissions</b><br>Lower penalty exposure</div>
-        </div>
-      </div>
-      <div class="sources">
-        <span class="label">Sources:</span>
-        Illustrative pro-forma for a mid-size system. Methodology per
-        <a href="https://www.cms.gov/medicare/quality/value-based-programs/hospital-readmissions" target="_blank" rel="noopener">CMS HRRP</a>
-        (excess readmission ratio x base IPPS payments, capped at 3%)
-        &nbsp;|&nbsp;
-        ROI benchmark:
-        <a href="https://www.ahrq.gov/patient-safety/settings/hospital/resource/guide/transition.html" target="_blank" rel="noopener">AHRQ Care Transitions</a>
-        (published RPM ROI 3-8x)
       </div>
     </div>
     <div class="chrome-bottom">
@@ -2410,41 +2447,29 @@
     </div>
     <div class="body">
       <div class="kicker">Septicemia Deep Dive</div>
-      <h2 class="headline">Septicemia is the clearest first use case: <span class="accent-red">$4,237</span> per day at risk.</h2>
-      <p class="deck-text">High volume, long LOS, and high cost per case make sepsis the most visible place to start.</p>
-      <div class="grid c4">
-        <div class="card metric">
-          <div class="eyebrow">Average LOS</div>
-          <div class="value red">7.8</div>
-          <div class="label">Average LOS (days)</div>
+      <h2 class="headline">Sepsis runs <span class="accent-red">3.3 days</span> over benchmark &mdash; <span class="accent-red">$1.55B</span> in excess stay cost.</h2>
+      <p class="deck-text">High volume, long LOS, and high cost per case make sepsis the clearest first use case. Closing the LOS gap toward CMS benchmark would unlock material savings without changing case mix.</p>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-eyebrow">LOS Comparison</div>
+          <div class="chart-title">Actual vs. CMS DRG 871 benchmark</div>
+          <div id="sepsis-los-chart" class="chart-canvas"></div>
+          <div class="chart-foot">Excess of <b>3.3 days</b> per case &times; <b>144K cases/yr</b> = <b>475K excess patient-days</b> annually.</div>
         </div>
-        <div class="card metric">
-          <div class="eyebrow">Benchmark</div>
-          <div class="value">4.5</div>
-          <div class="label">Benchmark GMLOS (CMS DRG 871)</div>
-        </div>
-        <div class="card metric">
-          <div class="eyebrow">Volume</div>
-          <div class="value amber">144K</div>
-          <div class="label">Annual Patient Volume (NY)</div>
-        </div>
-        <div class="card metric">
-          <div class="eyebrow">Cost per Case</div>
-          <div class="value red">$32.9K</div>
-          <div class="label">Average Cost per Case</div>
+        <div class="chart-card">
+          <div class="chart-eyebrow">Cost Stack</div>
+          <div class="chart-title">Where the $32.9K per case lands</div>
+          <div id="sepsis-cost-chart" class="chart-canvas"></div>
+          <div class="chart-foot"><b>$13.9K</b> excess per case &mdash; <b>42%</b> of average cost is preventable LOS.</div>
         </div>
       </div>
-      <div class="callout">471,718 excess patient-days annually &nbsp;|&nbsp; LOS Index: 1.73 &nbsp;|&nbsp; Highest cost DRG in the system</div>
       <div class="sources">
         <span class="label">Sources:</span>
-        <a href="https://hcup-us.ahrq.gov/reports/statbriefs/sb261-Septicemia-Hospital-Stays-2018.jsp" target="_blank" rel="noopener">AHRQ HCUP Statistical Brief #261</a>
-        (sepsis LOS, avg cost)
+        <a href="https://hcup-us.ahrq.gov/reports/statbriefs/sb261-Septicemia-Hospital-Stays-2018.jsp" target="_blank" rel="noopener">AHRQ HCUP SB #261</a>
         &nbsp;|&nbsp;
-        <a href="https://www.cms.gov/medicare/payment/prospective-payment-systems/acute-inpatient-pps" target="_blank" rel="noopener">CMS IPPS FY2024 Final Rule</a>
-        (DRG 871 GMLOS = 4.5 d)
+        <a href="https://www.cms.gov/medicare/payment/prospective-payment-systems/acute-inpatient-pps" target="_blank" rel="noopener">CMS IPPS FY2024</a> (DRG 871 GMLOS 4.5d)
         &nbsp;|&nbsp;
-        <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS SPARCS</a>
-        (144K annual NY sepsis discharges)
+        <a href="https://www.health.ny.gov/statistics/sparcs/" target="_blank" rel="noopener">NYS SPARCS</a> (144K NY cases) &nbsp;|&nbsp; Excess cost = 475K days &times; $2K avg cost/day
       </div>
     </div>
     <div class="chrome-bottom">
@@ -2810,6 +2835,229 @@
 
   render();
   updateScenario();
+})();
+
+/* ════════════════════════════════════════════════════════════════════
+   ECharts McKinsey-style visualizations
+   - Cumulative gain curve (slide 7)
+   - Risk score distribution (slide 8)
+   - HRRP penalty waterfall bridge (slide 12)
+   - Sepsis LOS comparison + cost stack (slide 13)
+   ════════════════════════════════════════════════════════════════════ */
+(function(){
+  if (typeof echarts === 'undefined') return;
+
+  const NAVY = '#1a2744';
+  const BLUE = '#0076a3';
+  const CYAN = '#00c2e8';
+  const RED = '#ef4444';
+  const GREEN = '#16a34a';
+  const AMBER = '#f59e0b';
+  const MUTED = '#94a3b8';
+  const HAIR = 'rgba(26,39,68,.08)';
+
+  const baseFont = '"Aptos","Inter",system-ui,sans-serif';
+  const charts = [];
+
+  function makeChart(id, optionFactory){
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const inst = echarts.init(el, null, {renderer:'canvas'});
+    inst._factory = optionFactory;
+    inst.setOption(optionFactory());
+    charts.push(inst);
+    return inst;
+  }
+
+  /* ─── 1. Cumulative gain curve (slide 7) ─── */
+  makeChart('gain-chart', () => {
+    const xs = [0,10,20,30,40,50,60,70,80,90,100];
+    const gain = [0,22.4,37.8,51.1,62.2,71.1,79.0,85.6,91.2,96.0,100];
+    const random = xs.map(x=>x);
+    return {
+      grid:{left:46,right:18,top:18,bottom:36,containLabel:false},
+      tooltip:{trigger:'axis',axisPointer:{type:'cross',lineStyle:{color:MUTED}},
+        formatter:(params)=>{
+          const x=params[0].axisValue;
+          let html=`<div style="font-family:${baseFont};font-size:12px"><b>Top ${x}%</b> targeted</div>`;
+          params.forEach(p=>{html+=`<div style="font-family:${baseFont};font-size:11.5px;color:${p.color}">${p.seriesName}: ${p.data}%</div>`;});
+          return html;
+        }},
+      xAxis:{type:'value',min:0,max:100,name:'% of patients targeted',nameLocation:'middle',nameGap:24,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10,formatter:'{value}%'},
+        axisLine:{lineStyle:{color:HAIR}},splitLine:{lineStyle:{color:HAIR}}},
+      yAxis:{type:'value',min:0,max:100,name:'% readmits captured',nameLocation:'middle',nameGap:36,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10,formatter:'{value}%'},
+        axisLine:{lineStyle:{color:HAIR}},splitLine:{lineStyle:{color:HAIR}}},
+      series:[
+        {name:'Random',type:'line',data:xs.map((x,i)=>[x,random[i]]),
+          lineStyle:{color:MUTED,width:1.5,type:'dashed'},symbol:'none',z:1},
+        {name:'Model',type:'line',data:xs.map((x,i)=>[x,gain[i]]),smooth:true,
+          lineStyle:{color:BLUE,width:3},symbol:'circle',symbolSize:6,
+          itemStyle:{color:CYAN,borderColor:BLUE,borderWidth:2},
+          areaStyle:{color:new echarts.graphic.LinearGradient(0,0,0,1,[
+            {offset:0,color:'rgba(0,194,232,.28)'},{offset:1,color:'rgba(0,194,232,0)'}
+          ])},z:3,
+          markPoint:{symbol:'pin',symbolSize:42,
+            data:[{name:'Top 10%',coord:[10,22.4],value:'22.4%'}],
+            label:{fontFamily:baseFont,fontSize:10,fontWeight:700,color:'#fff'},
+            itemStyle:{color:BLUE}}}
+      ]
+    };
+  });
+
+  /* ─── 2. Risk score distribution histogram (slide 8) ─── */
+  makeChart('risk-dist-chart', () => {
+    const buckets = ['0.0','0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9'];
+    const counts = [620,1480,2310,2640,2050,1380,840,440,200,90];
+    const colors = counts.map((_,i)=>{
+      if (i>=7) return RED;
+      if (i>=4) return AMBER;
+      return GREEN;
+    });
+    return {
+      grid:{left:42,right:14,top:18,bottom:34,containLabel:false},
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+        formatter:(params)=>{
+          const p=params[0];
+          const tier = p.dataIndex>=7 ? 'High' : p.dataIndex>=4 ? 'Moderate' : 'Low';
+          return `<div style="font-family:${baseFont};font-size:12px"><b>Risk ${p.name}–${(parseFloat(p.name)+0.1).toFixed(1)}</b><br>${p.value.toLocaleString()} patients · ${tier}</div>`;
+        }},
+      xAxis:{type:'category',data:buckets,name:'predicted readmission risk',nameLocation:'middle',nameGap:22,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10},
+        axisLine:{lineStyle:{color:HAIR}},axisTick:{show:false}},
+      yAxis:{type:'value',name:'patients',nameLocation:'middle',nameGap:34,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10},
+        axisLine:{lineStyle:{color:HAIR}},splitLine:{lineStyle:{color:HAIR}}},
+      series:[{
+        type:'bar',data:counts.map((v,i)=>({value:v,itemStyle:{color:colors[i]}})),
+        barWidth:'74%',
+        markLine:{silent:true,symbol:'none',
+          lineStyle:{color:NAVY,type:'dashed',width:1},
+          label:{fontFamily:baseFont,fontSize:10,color:NAVY,fontWeight:700,position:'insideEndTop'},
+          data:[
+            {xAxis:'0.4',label:{formatter:'0.4'}},
+            {xAxis:'0.7',label:{formatter:'0.7'}}
+          ]}
+      }]
+    };
+  });
+
+  /* ─── 3. HRRP penalty waterfall bridge (slide 12) ─── */
+  makeChart('bridge-chart', () => {
+    /* Stacked bar trick for waterfall: 'placeholder' invisible bar + visible delta */
+    const items = [
+      {name:'Baseline\nHRRP exposure', placeholder:0,    value:4.2, color:RED,   end:4.2, label:'$4.2M'},
+      {name:'Top-decile\ntargeting',   placeholder:2.6,  value:1.6, color:GREEN, end:2.6, label:'-$1.6M'},
+      {name:'RPM yield\non monitored',  placeholder:1.4,  value:1.2, color:GREEN, end:1.4, label:'-$1.2M'},
+      {name:'Intervention\ncost',      placeholder:1.4,  value:0.5, color:AMBER, end:1.9, label:'+$0.5M'},
+      {name:'Net\npenalty',            placeholder:0,    value:1.4, color:BLUE,  end:1.4, label:'$1.4M'}
+    ];
+    return {
+      grid:{left:50,right:18,top:30,bottom:54,containLabel:false},
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+        formatter:(params)=>{
+          const item = items[params[0].dataIndex];
+          return `<div style="font-family:${baseFont};font-size:12px"><b>${item.name.replace('\n',' ')}</b><br>${item.label} · ends at $${item.end.toFixed(1)}M</div>`;
+        }},
+      xAxis:{type:'category',data:items.map(i=>i.name),
+        axisLabel:{color:NAVY,fontFamily:baseFont,fontSize:11,fontWeight:600,interval:0,lineHeight:14},
+        axisLine:{lineStyle:{color:HAIR}},axisTick:{show:false}},
+      yAxis:{type:'value',name:'$M annual',nameLocation:'middle',nameGap:38,max:5,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10,formatter:'${value}M'},
+        axisLine:{lineStyle:{color:HAIR}},splitLine:{lineStyle:{color:HAIR}}},
+      series:[
+        {name:'placeholder',type:'bar',stack:'b',silent:true,
+          itemStyle:{borderColor:'transparent',color:'rgba(0,0,0,0)'},
+          emphasis:{itemStyle:{borderColor:'transparent',color:'rgba(0,0,0,0)'}},
+          data:items.map(i=>i.placeholder)},
+        {name:'value',type:'bar',stack:'b',
+          barWidth:'56%',
+          data:items.map(i=>({value:i.value,itemStyle:{color:i.color,borderRadius:[4,4,0,0]}})),
+          label:{show:true,position:'top',color:NAVY,
+            fontFamily:baseFont,fontSize:12,fontWeight:800,
+            formatter:(p)=>items[p.dataIndex].label}}
+      ]
+    };
+  });
+
+  /* ─── 4a. Sepsis LOS comparison (slide 13) ─── */
+  makeChart('sepsis-los-chart', () => {
+    return {
+      grid:{left:74,right:30,top:18,bottom:34,containLabel:false},
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'},
+        formatter:(params)=>{
+          let html = `<div style="font-family:${baseFont};font-size:12px">`;
+          params.forEach(p=>{html+=`<div style="color:${p.color}">${p.seriesName}: <b>${p.value} days</b></div>`;});
+          html+='</div>';
+          return html;
+        }},
+      xAxis:{type:'value',name:'days',nameLocation:'middle',nameGap:22,max:9,
+        nameTextStyle:{color:MUTED,fontFamily:baseFont,fontSize:11,fontWeight:600},
+        axisLabel:{color:MUTED,fontFamily:baseFont,fontSize:10},
+        axisLine:{lineStyle:{color:HAIR}},splitLine:{lineStyle:{color:HAIR}}},
+      yAxis:{type:'category',data:['Actual\n(NY sepsis)','Benchmark\n(CMS DRG 871)'],
+        axisLabel:{color:NAVY,fontFamily:baseFont,fontSize:11,fontWeight:700,lineHeight:14},
+        axisLine:{lineStyle:{color:HAIR}},axisTick:{show:false}},
+      series:[
+        {name:'Length of stay',type:'bar',
+          data:[
+            {value:7.8,itemStyle:{color:RED,borderRadius:[0,4,4,0]}},
+            {value:4.5,itemStyle:{color:GREEN,borderRadius:[0,4,4,0]}}
+          ],
+          barWidth:'48%',
+          label:{show:true,position:'right',color:NAVY,
+            fontFamily:baseFont,fontSize:13,fontWeight:800,
+            formatter:'{c} d'},
+          markLine:{silent:true,symbol:'none',
+            lineStyle:{color:AMBER,type:'dashed',width:2},
+            label:{show:true,formatter:'+3.3 days excess',color:AMBER,
+              fontFamily:baseFont,fontSize:11,fontWeight:700,position:'insideEndTop'},
+            data:[{xAxis:4.5}]}
+        }
+      ]
+    };
+  });
+
+  /* ─── 4b. Sepsis cost stack (slide 13) ─── */
+  makeChart('sepsis-cost-chart', () => {
+    return {
+      grid:{left:8,right:8,top:18,bottom:8,containLabel:false},
+      tooltip:{trigger:'item',
+        formatter:(p)=>`<div style="font-family:${baseFont};font-size:12px"><b>${p.name}</b><br>$${p.value.toLocaleString()}K · ${p.percent}%</div>`},
+      series:[{
+        type:'pie',radius:['54%','78%'],center:['50%','52%'],
+        avoidLabelOverlap:true,
+        itemStyle:{borderColor:'#fff',borderWidth:3,borderRadius:6},
+        label:{show:true,position:'outside',
+          fontFamily:baseFont,fontSize:11,fontWeight:700,color:NAVY,
+          formatter:(p)=>`${p.name}\n$${p.value}K`},
+        labelLine:{length:8,length2:6,lineStyle:{color:MUTED}},
+        data:[
+          {name:'Within benchmark',value:19.0,itemStyle:{color:GREEN}},
+          {name:'Excess LOS',value:13.9,itemStyle:{color:RED}}
+        ]
+      }]
+    };
+  });
+
+  /* ─── Resize on window change & on slide change (so charts size correctly) ─── */
+  function resizeAll(){ charts.forEach(c=>{ try{ c.resize(); }catch(e){} }); }
+  window.addEventListener('resize', resizeAll);
+  /* Re-fire on first load + briefly after to settle layouts */
+  setTimeout(resizeAll, 80);
+  setTimeout(resizeAll, 320);
+
+  /* Hook into slide nav so charts re-render correctly when slides become visible */
+  const observer = new MutationObserver(()=>{ resizeAll(); });
+  document.querySelectorAll('.slide').forEach(s=>{
+    observer.observe(s, {attributes:true, attributeFilter:['class']});
+  });
 })();
 </script>
 </body>
